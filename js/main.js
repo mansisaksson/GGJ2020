@@ -57,40 +57,54 @@ function update(time) {
 }
 
 $(document).ready(function () {
+    var keyMap = {
+        ArrowUp: false,
+        ArrowDown: false,
+        ArrowLeft: false,
+        ArrowRight: false
+    }
+
+    function updateInput() {
+        playerObj.throttle = (keyMap.ArrowUp ? -1 : 0) + (keyMap.ArrowDown ? 1 : 0)
+        playerObj.stearing = (keyMap.ArrowLeft ? -1 : 0) + (keyMap.ArrowRight ? 1 : 0)
+    }
+    
     document.addEventListener('keydown', (event) => {
         if (event.key == "ArrowUp") {
-            playerObj.throttle = -1;
+            keyMap.ArrowUp = true;
         }
         if (event.key == "ArrowDown") {
-            playerObj.throttle = 1;
+            keyMap.ArrowDown = true;
         }
 
         if (event.key == "ArrowLeft") {
-            playerObj.stearing = -1;
+            keyMap.ArrowLeft = true;
         }
         if (event.key == "ArrowRight") {
-            playerObj.stearing = 1;
+            keyMap.ArrowRight = true;
         }
 
         //event.preventDefault();
+        updateInput()
     });
 
     document.addEventListener('keyup', (event) => {
         if (event.key == "ArrowUp") {
-            playerObj.throttle = 0;
+            keyMap.ArrowUp = false;
         }
         if (event.key == "ArrowDown") {
-            playerObj.throttle = 0;
+            keyMap.ArrowDown = false;
         }
 
         if (event.key == "ArrowLeft") {
-            playerObj.stearing = 0;
+            keyMap.ArrowLeft = false;
         }
         if (event.key == "ArrowRight") {
-            playerObj.stearing = 0;
+            keyMap.ArrowRight = false;
         }
 
-       // event.preventDefault();
+        //event.preventDefault();
+        updateInput()
     });
 
     main();
