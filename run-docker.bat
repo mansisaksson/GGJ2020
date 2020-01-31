@@ -1,1 +1,1 @@
-docker run -p 80:80 -v %0/../:/var/www/html/ dockerregistry.mansisaksson.com:5000/ggj2020:la
+docker run -p 80:80 -v %0/../:/var/www/html/ dockerregistry.mansisaksson.com:5000/ggj2020:latest
