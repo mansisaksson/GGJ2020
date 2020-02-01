@@ -23,9 +23,10 @@ function drawTextAt(xPos, yPos, angle, text, options) {
 
 function drawCircleAt(xPos, yPos, radius) {
     ctx.save();
-    ctx.translate(xPos, yPos);
     
-    // plz do dis tobias
+    ctx.beginPath();
+    ctx.arc(xPos, yPos, radius, 0, Math.PI * 2, false);
+    ctx.stroke();
     
     ctx.restore();
 }
