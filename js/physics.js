@@ -29,7 +29,7 @@ function createRigidBody(xPos, yPos, rot, mass, radius, linearDampening, angular
     return rigidBody
 }
 
-function simulatePhysicsScene(deltaTime) {
+function updatePhysicsScene(deltaTime) {
     // integrate physics
     rigidBodies.forEach(rb => {
         let invMass = 1.0 / rb.mass;
@@ -70,14 +70,14 @@ function simulatePhysicsScene(deltaTime) {
             let optimizedP = (2.0 * (a1 - a2)) / (rb1.mass + rb2.mass);
 
             // Calculate v1, the new movement vector of ball1
-            let v1 = vecSubtract(rb.velocity, vecScalarMultiply(collisionAngle, optimizedP * rb1.mass));
+            let v1 = vecSubtract(rb1.velocity, vecScalarMultiply(collisionAngle, optimizedP * rb1.mass));
 
             // Calculate v2, the new movement vector of ball2
             let v2 =  vecAdd(rb2.velocity, vecScalarMultiply(collisionAngle, optimizedP * rb2.mass));
 
             // Move the balls so that they are not overlapping
-            rb1.position = vecSubtract(rb1.position, vecScalarMultiply(collisionAngle, depth / 2.0));
-            rb2.position = vecSubtract(rb2.position, vecScalarMultiply(collisionAngle, -1 * (depth / 2.0)));
+            rb1.position = vecSubtract(rb1.position, vecScalarMultiply(collisionAngle, penetrationDepth / 2.0));
+            rb2.position = vecSubtract(rb2.position, vecScalarMultiply(collisionAngle, -1 * (penetrationDepth / 2.0)));
 
             // Apply new velocity
             rb1.velocity = v1;
@@ -85,12 +85,19 @@ function simulatePhysicsScene(deltaTime) {
         }
     }
 
-    rigidBodies.forEach((rb1, i1) => {
-        rigidBodies.forEach((rb2, i2) => {
-            if (i1 != i2) {
-                calculateRigidBodyCollision(rb1, rb2);
-            }
-        });
+    // TODO: Collision
+    // rigidBodies.forEach((rb1, i1) => {
+    //     rigidBodies.forEach((rb2, i2) => {
+    //         if (i1 != i2) {
+    //             calculateRigidBodyCollision(rb1, rb2);
+    //         }
+    //     });
+    // });
+}
+
+function drawPhysicsScene() {
+    rigidBodies.forEach(rb => {
+        drawCircleAt(rb.position.x, rb.position.y, rb.radius);
     });
 }
 

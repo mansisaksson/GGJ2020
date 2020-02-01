@@ -6,31 +6,6 @@ var ctx = null;
 var gameTime = 0.0;
 var playerObj = null;
 
-function drawTextAt(xPos, yPos, angle, text, options) {
-    ctx.save();
-    ctx.translate(xPos, yPos);
-    ctx.rotate(angle);
-
-    options = options ? options : {};
-    let fontSize = options.fontSize ? options.fontSize : 24;
-
-    ctx.font = options.font ? options.font : fontSize + 'px Consolas';
-
-    let subStrings = text.split("\n");
-    ctx.translate(0, -fontSize * (subStrings.length / 2 - 0.5))
-
-    subStrings.forEach(line => {
-        /** @type {TextMetrics} */
-        let lineMetrics = ctx.measureText(line);
-        ctx.fillText(line, -lineMetrics.width / 2, fontSize / 2);
-        ctx.translate(0, fontSize);
-    });
-
-    ctx.restore();
-}
-
-//function drawImageAt()
-
 function main() {
     /** @type {HTMLCanvasElement} */
     gameCanvas = document.getElementById("game-canvas");
@@ -52,15 +27,15 @@ function update(time) {
 
     ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
 
-    //drawTextAt(250, 250, 0, testDrawString, { fontSize: 24 })
-
     playerObj.update(deltaTime);
     playerBullets.forEach(b => b.update(deltaTime));
+    updatePhysicsScene(deltaTime);
     
     simulatePhysicsScene(deltaTime);
-    playerBullets.forEach(b => b.draw());
     
     playerObj.draw();
+    playerBullets.forEach(b => b.draw());
+	drawPhysicsScene();
 	
     requestAnimationFrame(update);
 }
