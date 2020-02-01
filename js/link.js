@@ -7,8 +7,14 @@ function createLinkAt(x, y, rotation, anchorElement) {
         textSize: { x: 0, y: 0 },
         draw: function () {
             ctx.save();
-            ctx.fillStyle = 'rgb(10, 70, 170)';
-            var text = drawTextAt(this.rigidBody.position.x, this.rigidBody.position.y, this.rigidBody.rotation, this.linkAscii);
+            if(this.href.toLowerCase() == 'https://en.wikipedia.org/wiki/adolf_hitler') {
+                ctx.fillStyle = 'rgb(255, 60, 60)';
+                var text = drawTextAt(this.rigidBody.position.x, this.rigidBody.position.y, this.rigidBody.rotation, this.linkAscii, {fontSize: 64});
+            }
+            else {
+                ctx.fillStyle = 'rgb(10, 70, 170)';
+                var text = drawTextAt(this.rigidBody.position.x, this.rigidBody.position.y, this.rigidBody.rotation, this.linkAscii);
+            }
             this.textSize.x = text.width
             this.textSize.y = 24;
             //ctx.fillRect(this.rigidBody.position.x, this.rigidBody.position.y, text.width, defaultFontSize);
