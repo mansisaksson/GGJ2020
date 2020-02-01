@@ -119,7 +119,6 @@ function main() {
 }
 
 function loadWikiPage(href) {
-
     $.ajax({
         type: 'GET',
         url: 'scripts/get_wiki_content.php',
@@ -130,6 +129,10 @@ function loadWikiPage(href) {
         success: function (data) {
             let domparser = new DOMParser();
             wikiDOM = domparser.parseFromString(data, 'text/html');
+
+            var title = document.getElementById('wiki-title');
+            title.innerHTML = wikiDOM.getElementById('firstHeading').innerHTML;
+
             var anchors = getLinksFromWikiPage(wikiDOM);
             anchors.forEach((a) => links.push(createLinkAt(100 + Math.random() * 500, 100, (Math.random()-0.5) * 1, a)));
         }
@@ -143,7 +146,7 @@ function getLinksFromWikiPage(document) {
     let anchors = new Array();
     for(let i = 0; i < unfilteredAnchors.length; i++) {
         let a = unfilteredAnchors[i];
-        if(a.href) {
+        if(a.href && !a.innerHTML.includes('<')) {
             let url = new URL(a.href);
             if(url.hostname = 'localhost' && url.pathname.startsWith('\/wiki\/') && !url.pathname.includes(':')) {
                 a.href = 'https://en.wikipedia.org'+url.pathname;
