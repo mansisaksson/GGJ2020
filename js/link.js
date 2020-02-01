@@ -22,6 +22,14 @@ function createLinkAt(x, y, rotation, anchorElement) {
                 linkPortals.push(createLinkPortalAt(this));
                 destroyLinkByRigidBody(this.rigidBody);
                 destroyBulletByRigidBody(hits[0]);
+                let linkIndex;
+                for(let i = 0; i < links.length; i++) {
+                    if(links[i] == this) {
+                        linkIndex = i;
+                        break;
+                    }
+                }
+                links.splice(linkIndex, 1);
             }
             let force = vecScalarMultiply(this.rigidBody.getForward(), this.speed);
             this.rigidBody.addForce(force);
