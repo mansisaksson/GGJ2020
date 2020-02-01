@@ -31,10 +31,11 @@ function update(time) {
 
     playerObj.update(deltaTime);
     playerBullets.forEach(b => b.update(deltaTime));
+    updatePhysicsScene(deltaTime);
     
-	simulatePhysicsScene(deltaTime);
     playerObj.draw();
     playerBullets.forEach(b => b.draw());
+	drawPhysicsScene();
 	
     requestAnimationFrame(update);
 }

@@ -29,7 +29,7 @@ function createRigidBody(xPos, yPos, rot, mass, radius, linearDampening, angular
     return rigidBody
 }
 
-function simulatePhysicsScene(deltaTime) {
+function updatePhysicsScene(deltaTime) {
     // integrate physics
     rigidBodies.forEach(rb => {
         let invMass = 1.0 / rb.mass;
@@ -91,6 +91,12 @@ function simulatePhysicsScene(deltaTime) {
                 calculateRigidBodyCollision(rb1, rb2);
             }
         });
+    });
+}
+
+function drawPhysicsScene() {
+    rigidBodies.forEach(rb => {
+        drawCircleAt(rb.position.x, rb.position.y, rb.radius);
     });
 }
 
