@@ -4,13 +4,13 @@ var gameCanvas = null;
 var ctx = null;
 
 var gameTime = 0.0;
-var deltaTime = 0.0;
 var playerObj = null;
 var playerBullets = new Array();
 var links = new Array();
+var linkPortals = new Array();
 
 function update(time) {
-    deltaTime = (time - gameTime) / 1000.0;
+    let deltaTime = (time - gameTime) / 1000.0;
     gameTime = time;
 
     ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
@@ -112,7 +112,7 @@ function main() {
 
     loadWikiPage('https://en.wikipedia.org/wiki/Special:Random');
 }
-
+const linksToSpawn = 50;
 function loadWikiPage(href) {
     for(let i = 0; i < links.length; i++) {
         destroyLinkByRigidBody(links[i].rigidBody);
@@ -130,9 +130,25 @@ function loadWikiPage(href) {
             wikiDOM = domparser.parseFromString(data, 'text/html');
 
             var title = document.getElementById('wiki-title');
-            title.innerHTML = wikiDOM.getElementById('firstHeading').innerHTML;
+            if(wikiDOM.getElementById('firstHeading')) {
+                title.innerHTML = wikiDOM.getElementById('firstHeading').innerHTML;
+            }
+            else {
+                title.innerHTML = 'UNKNOWN';
+            }
 
             anchorsToCreateLinksFrom = getLinksFromWikiPage(wikiDOM);
+            
+            // todo :: remove duplicates
+
+            var anchorsToKeep = new Array();
+            if(anchorsToCreateLinksFrom.length > linksToSpawn) {
+                for(let i = 0; i < linksToSpawn; i++) {
+                    anchorsToKeep.push(anchorsToCreateLinksFrom[getRandomInt(anchorsToCreateLinksFrom.length)]);
+                }
+                anchorsToCreateLinksFrom = anchorsToKeep;
+            }
+
             createLinksOverTime(anchorsToCreateLinksFrom);
         }
     });
@@ -155,7 +171,7 @@ function createLinksOverTime(time) {
         return;
     }
 
-    timeToNextLink = 0.2;
+    timeToNextLink = 0.4;
 
     var quadrant = getRandomInt(4);
 
