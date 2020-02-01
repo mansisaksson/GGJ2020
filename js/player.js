@@ -4,6 +4,7 @@ function createPlayerAt(x, y) {
         stearing: 0,
         rigidBody: createRigidBody(x, y, 0),
         playerSpeed: 1000.0,
+        turnSpeed: 15.0,
         playerShipASCII: `.
 .'.
 |o|
@@ -14,6 +15,8 @@ function createPlayerAt(x, y) {
         update: function (deltaTime) {
             let force = vecScalarMultiply(this.rigidBody.getForward(), this.playerSpeed * this.throttle)
             this.rigidBody.addForce(force)
+            let torque = this.stearing * this.turnSpeed;
+            this.rigidBody.addTorque(torque)
         },
 
         draw: function() {

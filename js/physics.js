@@ -10,11 +10,14 @@ function createRigidBody(xPos, yPos, rot) {
         force: { x: 0, y: 0 },
         torque: 0,
         mass: 1,
-        linearDampening: 0.05,
-        angularDampening: 0.1,
+        linearDampening: 0.02,
+        angularDampening: 10.0,
         radius: 1,
         addForce: function (vec) {
             this.force = vecAdd(this.force, vec)
+        },
+        addTorque: function (t) {
+            this.torque += t;
         },
         getForward: function () {
             const halfPi = (3.14 / 2);
@@ -39,11 +42,12 @@ function simulatePhysicsScene(deltaTime) {
 
         rb.force = { x: 0, y: 0 };
 
-        // rb.rotation += 0.5 * rb.angularVelocity * deltaTime;
-        // rb.angularVelocity += rb.torque * deltaTime;
-        // rb.rotation += 0.5 * rb.angularVelocity * deltaTime;
+        rb.rotation += 0.5 * rb.angularVelocity * deltaTime;
+        rb.angularVelocity += rb.torque * deltaTime;
+        rb.rotation += 0.5 * rb.angularVelocity * deltaTime;
+        rb.angularVelocity -= Math.sign(rb.angularVelocity) * rb.angularDampening * rb.mass * deltaTime;
 
-        // todo: torque
+        rb.torque = 0;
     })
 
     // collision check
