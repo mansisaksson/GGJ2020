@@ -57,7 +57,9 @@ function update(time) {
     playerObj.update(deltaTime);
     playerBullets.forEach(b => b.update(deltaTime));
     
-	simulatePhysicsScene(deltaTime);
+    simulatePhysicsScene(deltaTime);
+    playerBullets.forEach(b => b.draw());
+    
     playerObj.draw();
 	
     requestAnimationFrame(update);
@@ -97,7 +99,7 @@ $(document).ready(function () {
             event.preventDefault();
         }
         if(event.key == " ") {
-            playerBullets.push(createBulletAt(playerObj.rigidBody.position.x + playerObj.rigidBody.radius ? playerObj.rigidBody.radius : 20, playerObj.rigidBody.position.y, playerObj.rigidBody.rotation));
+            playerBullets.push(createBulletAt(playerObj.rigidBody.position.x, playerObj.rigidBody.position.y-20, playerObj.rigidBody.rotation));
             event.preventDefault();
         }
 
