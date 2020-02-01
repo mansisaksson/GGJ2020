@@ -48,6 +48,9 @@ function createRigidBody(bodyType, xPos, yPos, rot, radius, isKinematic = false,
             const halfPi = (3.14 / 2);
             return { x: Math.cos(this.rotation + halfPi), y: Math.sin(this.rotation + halfPi) };
         },
+        getRight: function () {
+            return { x: Math.cos(this.rotation), y: Math.sin(this.rotation) };
+        },
         setVelocity: function (newVel) {
             this.prevPosition = vecSubtract(this.position, vecScalarMultiply(newVel, deltaTime));
             this.velocity = newVel;
@@ -93,6 +96,10 @@ function updatePhysicsScene(deltaTime) {
     }
 
     function calculateWallCollision(rb) {
+        if (rb.collisionResponse["wall"] == "ignore") {
+            return;
+        }
+
         const wallBounciness = 0.5;
         let leftDepth = rb.position.x - rb.radius;
         if (leftDepth < 0) {
@@ -182,9 +189,37 @@ function updatePhysicsScene(deltaTime) {
 }
 
 function drawPhysicsScene() {
-    rigidBodies.forEach(rb => {
-        drawCircleAt(rb.position.x, rb.position.y, rb.radius);
-        //drawBoxAt(rb.position.x, rb.position.y, rb.width, rb.height)
-    });
+    // rigidBodies.forEach(rb => {
+    //     drawCircleAt(rb.position.x, rb.position.y, rb.radius);
+    // });
 }
 
+function lineTrace(start, end, filterType, lineThikness = 0) {
+    //drawLine(start.x, start.y, end.x, end.y);
+
+    let result = []
+    for (let i = 0; i < rigidBodies.length; i++) {
+        let rb = rigidBodies[i]
+        if (filterType != undefined && rb.bodyType != filterType) {
+            continue
+        }
+
+        let line = vecSubtract(end, start);
+        let lineLength = vecLength(line);
+        let lineDir = vecNormalize(line);
+
+        let dot = vecDot(vecSubtract(rb.position, start), lineDir)
+        if (dot + rb.radius + lineThikness <= 0
+            || dot - rb.radius - lineThikness >= lineLength) {
+            continue;
+        }
+
+        let projectionPoint = vecAdd(start, vecScalarMultiply(lineDir, dot));
+        let distToLine = vecLength(vecSubtract(projectionPoint, rb.position));
+        if ((distToLine - lineThikness) <= rb.radius) {
+            result.push(rb);
+            //drawCircleAt(projectionPoint.x, projectionPoint.y, 10)
+        }
+    }
+    return result
+}

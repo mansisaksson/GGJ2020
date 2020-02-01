@@ -4,15 +4,25 @@ function createLinkAt(x, y, rotation, anchorElement) {
         speed: 1.0,
         linkAscii: anchorElement.innerHTML,
         href: anchorElement.href,
-        draw: function() {
+        textSize: { x: 0, y: 0 },
+        draw: function () {
             ctx.save();
             ctx.fillStyle = 'rgb(10, 70, 170)';
-            drawTextAt(this.rigidBody.position.x, this.rigidBody.position.y, this.rigidBody.rotation, this.linkAscii);
-            var text = ctx.measureText(this.linkAscii);
+            var text = drawTextAt(this.rigidBody.position.x, this.rigidBody.position.y, this.rigidBody.rotation, this.linkAscii);
+            this.textSize.x = text.width
+            this.textSize.y = 24;
             //ctx.fillRect(this.rigidBody.position.x, this.rigidBody.position.y, text.width, defaultFontSize);
             ctx.restore();
-        }, 
+        },
         update: function (deltaTime) {
+            let start = vecAdd(this.rigidBody.position, vecScalarMultiply(this.rigidBody.getRight(), -this.textSize.x / 2));
+            let end = vecAdd(this.rigidBody.position, vecScalarMultiply(this.rigidBody.getRight(), this.textSize.x / 2));
+            let hits = lineTrace(start, end, "bullet", 12)
+            if (hits.length > 0) {
+                destroyLinkByRigidBody(this.rigidBody)
+                destroyBulletByRigidBody(hits[0])
+                loadWikiPage(this.href);
+            }
             let force = vecScalarMultiply(this.rigidBody.getForward(), this.speed);
             this.rigidBody.addForce(force);
         }

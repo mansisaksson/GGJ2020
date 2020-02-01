@@ -4,24 +4,9 @@ function createBulletAt(x, y, rotation) {
             linearDampening: 0.001,
             collisionResponse: {
                 player: "ignore",
-                wall: "ignore",
-                link: "overlap"
-            },
-            onOverlap: function (rb) {
-                let link;
-                for (let i = 0; i < links.length; i++) {
-                    if (links[i].rigidBody.index == rb.index) {
-                        link = links[i];
-                        break;
-                    }
-                }
-                destroyLinkByRigidBody(rb)
-                destroyBulletByRigidBody(this)
-
-                if(link) {
-                    loadWikiPage(link.href);
-                }
-            } 
+                wall: "collide",
+                link: "ignore"
+            }
         }),
         speed: 1000.0,
         bulletASCII: `*`,

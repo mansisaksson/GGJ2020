@@ -19,17 +19,21 @@ function drawTextAt(xPos, yPos, angle, text, options) {
         ctx.fillText(line, -lineMetrics.width / 2, fontSize / 2);
         ctx.translate(0, fontSize);
     });
-
+    
+    /** @type {TextMetrics} */
+    let textMetrics = ctx.measureText(text)
     ctx.restore();
+
+    return textMetrics;
 }
 
 function drawCircleAt(xPos, yPos, radius) {
     ctx.save();
-    
+
     ctx.beginPath();
     ctx.arc(xPos, yPos, radius, 0, Math.PI * 2, false);
     ctx.stroke();
-    
+
     ctx.restore();
 }
 
@@ -47,5 +51,14 @@ function drawBoxAt(xPos, yPos, width, height) {
     w -= thickness * 2;
     h -= thickness * 2;
     ctx.clearRect(x, y, w, h);
+    ctx.restore();
+}
+
+function drawLine(x1, y1, x2, y2) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
     ctx.restore();
 }
