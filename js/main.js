@@ -12,7 +12,7 @@ function drawTextAt(xPos, yPos, angle, text, options) {
     ctx.rotate(angle);
 
     options = options ? options : {};
-    let fontSize = options.fontSize ? options.fontSize : 48;
+    let fontSize = options.fontSize ? options.fontSize : 24;
 
     ctx.font = options.font ? options.font : fontSize + 'px Consolas';
 
@@ -55,18 +55,22 @@ function update(time) {
     //drawTextAt(250, 250, 0, testDrawString, { fontSize: 24 })
 
     playerObj.update(deltaTime);
-    simulatePhysicsScene(deltaTime);
+    playerBullets.forEach(b => b.update(deltaTime));
+    
+	simulatePhysicsScene(deltaTime);
     playerObj.draw();
-
+	
     requestAnimationFrame(update);
 }
+
+var playerBullets = new Array();
 
 $(document).ready(function () {
     var keyMap = {
         ArrowUp: false,
         ArrowDown: false,
         ArrowLeft: false,
-        ArrowRight: false
+        ArrowRight: false,
     }
 
     function updateInput() {
@@ -92,7 +96,8 @@ $(document).ready(function () {
             keyMap.ArrowRight = true;
             event.preventDefault();
         }
-        if(event.key == "Space") {
+        if(event.key == " ") {
+            playerBullets.push(createBulletAt(playerObj.rigidBody.position.x + playerObj.rigidBody.radius ? playerObj.rigidBody.radius : 20, playerObj.rigidBody.position.y, playerObj.rigidBody.rotation));
             event.preventDefault();
         }
 
@@ -117,7 +122,7 @@ $(document).ready(function () {
             keyMap.ArrowRight = false;
             event.preventDefault();
         }
-        if(event.key == "Space") {
+        if(event.key == " ") {
             event.preventDefault();
         }
 
