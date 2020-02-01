@@ -2,7 +2,7 @@ function createPlayerAt(x, y) {
     return {
         throttle: 0,
         stearing: 0,
-        rigidBody: createRigidBody(x, y, 0, 10, 50, 50),
+        rigidBody: createRigidBody("player", x, y, 0, 50, false),
         playerSpeed: 1000.0,
         turnSpeed: 15.0,
         playerShipASCII: `.

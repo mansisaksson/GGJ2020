@@ -1,6 +1,6 @@
 function createLinkAt(x, y, rotation, anchorElement) {
     return {
-        rigidBody: createRigidBody(x, y, rotation),
+        rigidBody: createRigidBody("link", x, y, rotation, 20),
         speed: 1.0,
         linkAscii: anchorElement.innerHTML,
         href: anchorElement.href,
@@ -17,4 +17,14 @@ function createLinkAt(x, y, rotation, anchorElement) {
             this.rigidBody.addForce(force);
         }
     }
+}
+
+function destroyLinkByRigidBody(rb) {
+    for (let i = 0; i < links.length; i++) {
+        if (links[i].rigidBody.index == rb.index) {
+            links.splice(i, 1);
+            break;
+        }
+    }
+    destroyRigidBody(rb);
 }
