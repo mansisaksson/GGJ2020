@@ -1,6 +1,6 @@
 var rigidBodies = []
 
-function createRigidBody(xPos, yPos, rot, mass, radius, linearDampening, angularDampening) {
+function createRigidBody(xPos, yPos, rot, mass, width, height, linearDampening, angularDampening, isKinematic = false) {
     let rigidBody = {
         position: { x: xPos, y: yPos },
         prevPosition: { x: xPos, y: yPos },
@@ -12,7 +12,9 @@ function createRigidBody(xPos, yPos, rot, mass, radius, linearDampening, angular
         mass: mass ? mass : 1,
         linearDampening: linearDampening ? linearDampening : 0.02,
         angularDampening: angularDampening ? angularDampening : 10.0,
-        radius: radius ? radius : 1,
+        width: width ? width : 10,
+        height: height ? height : 10,
+        isKinematic: isKinematic,
         addForce: function (vec) {
             this.force = vecAdd(this.force, vec)
         },
@@ -30,8 +32,7 @@ function createRigidBody(xPos, yPos, rot, mass, radius, linearDampening, angular
 }
 
 function updatePhysicsScene(deltaTime) {
-    // integrate physics
-    rigidBodies.forEach(rb => {
+    function updateRigidBodyMovement(rb) {
         let invMass = 1.0 / rb.mass;
         let newPos = vecScalarMultiply(rb.position, (2.0 - rb.linearDampening));
         newPos = vecSubtract(newPos, vecScalarMultiply(rb.prevPosition, (1.0 - rb.linearDampening)))
@@ -40,27 +41,36 @@ function updatePhysicsScene(deltaTime) {
         rb.prevPosition = vecCpy(rb.position);
         rb.position = vecCpy(newPos);
 
-        rb.force = { x: 0, y: 0 };
-
         rb.rotation += 0.5 * rb.angularVelocity * deltaTime;
         rb.angularVelocity += rb.torque * deltaTime;
         rb.rotation += 0.5 * rb.angularVelocity * deltaTime;
-        rb.angularVelocity -= Math.sign(rb.angularVelocity) * rb.angularDampening * rb.mass * deltaTime;
+        rb.angularVelocity -= Math.sign(rb.angularVelocity) * rb.angularDampening * deltaTime;
 
+        rb.velocity = vecScalarMultiply(vecSubtract(rb.position, rb.prevPosition), 1.0 / deltaTime);
+
+        rb.force = { x: 0, y: 0 };
         rb.torque = 0;
-    })
+    }
 
-    // collision check
     function calculateRigidBodyCollision(rb1, rb2) {
+        //var rect1 = { x: rb1.position.x - rb1.width / 2, y: rb1.position.y - rb1.height / 2, width: rb1.width, height: rb1.height }
+        //var rect2 = { x: rb2.position.x - rb2.width / 2, y: rb2.position.y - rb2.height / 2, width: rb2.width, height: rb2.height }
+        // if (rect1.x < rect2.x + rect2.width &&
+        //     rect1.x + rect1.width > rect2.x &&
+        //     rect1.y < rect2.y + rect2.height &&
+        //     rect1.y + rect1.height > rect2.y) {
+        //     performCollisionResponse()
+        //     console.log("Collide!")
+        // }
+
+        // Old circle collision
         let relativePosition = vecSubtract(rb1.position, rb2.position);
         let rbDistance = vecLength(relativePosition);
+        rb1.radius = rb1.width;
+        rb2.radius = rb2.width;
         let penetrationDepth = rbDistance - (rb1.radius + rb2.radius);
-
         if (penetrationDepth < 0) {
             let collisionAngle = vecNormalize(relativePosition);
-
-            //if (DebugDrawCollision)
-            //    Debug.DrawLine(ball1.GetPosition(), ball1.GetPosition() + collisionAngle);
 
             // Find the length of the component of each of the movement vectors along the collision Angle
             let a1 = vecDot(rb1.velocity, collisionAngle);
@@ -69,35 +79,49 @@ function updatePhysicsScene(deltaTime) {
             // Only Calculate P once so that it can be use for both v1 and v2
             let optimizedP = (2.0 * (a1 - a2)) / (rb1.mass + rb2.mass);
 
-            // Calculate v1, the new movement vector of ball1
-            let v1 = vecSubtract(rb1.velocity, vecScalarMultiply(collisionAngle, optimizedP * rb1.mass));
-
-            // Calculate v2, the new movement vector of ball2
-            let v2 =  vecAdd(rb2.velocity, vecScalarMultiply(collisionAngle, optimizedP * rb2.mass));
-
-            // Move the balls so that they are not overlapping
-            rb1.position = vecSubtract(rb1.position, vecScalarMultiply(collisionAngle, penetrationDepth / 2.0));
-            rb2.position = vecSubtract(rb2.position, vecScalarMultiply(collisionAngle, -1 * (penetrationDepth / 2.0)));
-
             // Apply new velocity
-            rb1.velocity = v1;
-            rb2.velocity = v2;
+            if (!rb1.isKinematic) {
+                // Move the body so that they are not overlapping
+                let moveScalar = rb2.isKinematic ? 1 : 0.5;
+                rb1.position = vecSubtract(rb1.position, vecScalarMultiply(collisionAngle, penetrationDepth * moveScalar));
+
+                // Set new velocity
+                //let v1 = vecSubtract(rb1.velocity, vecScalarMultiply(collisionAngle, optimizedP * rb1.mass));
+                //rb1.prevPosition = vecSubtract(rb1.position, vecScalarMultiply(v1, deltaTime));
+                //rb1.velocity = v1;
+            }
+            if (!rb2.isKinematic) {
+                // Move the body so that they are not overlapping
+                let moveScalar = rb1.isKinematic ? -1 : -0.5;
+                rb2.position = vecSubtract(rb2.position, vecScalarMultiply(collisionAngle, penetrationDepth * moveScalar));
+
+                // Set new velocity
+                //let v2 = vecAdd(rb2.velocity, vecScalarMultiply(collisionAngle, optimizedP * rb2.mass));
+                //rb2.prevPosition = vecSubtract(rb2.position, vecScalarMultiply(v2, deltaTime));
+                //rb2.velocity = v2;
+            }
         }
     }
 
-    // TODO: Collision
-    // rigidBodies.forEach((rb1, i1) => {
-    //     rigidBodies.forEach((rb2, i2) => {
-    //         if (i1 != i2) {
-    //             calculateRigidBodyCollision(rb1, rb2);
-    //         }
-    //     });
-    // });
+    rigidBodies.forEach((rb, i) => {
+        if (!rb.isKinematic) {
+            updateRigidBodyMovement(rb)
+
+            for (let j = i + 1; j < rigidBodies.length; j++) {
+                calculateRigidBodyCollision(rb, rigidBodies[j]);
+            }
+        }
+        else {
+            rb.velocity = { x: 0, y: 0 };
+            rb.prevPosition = rb.position;
+        }
+    })
 }
 
 function drawPhysicsScene() {
     rigidBodies.forEach(rb => {
-        drawCircleAt(rb.position.x, rb.position.y, rb.radius);
+        drawCircleAt(rb.position.x, rb.position.y, rb.width);
+        drawBoxAt(rb.position.x, rb.position.y, rb.width, rb.height)
     });
 }
 

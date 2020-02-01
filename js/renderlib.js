@@ -30,3 +30,20 @@ function drawCircleAt(xPos, yPos, radius) {
     
     ctx.restore();
 }
+
+function drawBoxAt(xPos, yPos, width, height) {
+    ctx.save();
+    let thickness = 2;
+    let x = xPos - width / 2;
+    let y = yPos - height / 2;
+    let w = width;
+    let h = height;
+    ctx.fillRect(x, y, w, h);
+
+    x += thickness;
+    y += thickness;
+    w -= thickness * 2;
+    h -= thickness * 2;
+    ctx.clearRect(x, y, w, h);
+    ctx.restore();
+}

@@ -1,9 +1,9 @@
 function vecLength(vec) {
-    return Math.sqrt(vec.x * vec.x, vec.y * vec.y)
+    return Math.sqrt(vec.x * vec.x + vec.y * vec.y)
 }
 
 function vecNormalize(vec) {
-    let length = vecLength(vec.x, vec.y)
+    let length = vecLength(vec)
     return { x: vec.x / length, y: vec.y / length };
 }
 

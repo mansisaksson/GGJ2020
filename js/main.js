@@ -14,6 +14,10 @@ function main() {
 
     playerObj = createPlayerAt(400, 400, 0);
 
+    let wallMass = 100000;
+    let wallWidth = 100;
+    createRigidBody(0, gameCanvas.height / 2, 0, wallMass, wallWidth, gameCanvas.height, 0, 0, true);
+
     // acanvas.addEventListener('mousemove', mouseMove, false); //Call the mouseMove function when the mouse is moved over the canvas element
     // acanvas.addEventListener('mousedown', mouseDown, false); //Call the mouseDown function when a mouse button is pressed down on the canvas element
     // acanvas.addEventListener('contextmenu', function(event){console.log("onContextMenu");event.preventDefault();}, false); //Prevent the context menu to be displayed when right mouse button is clicked on the canvas
@@ -72,7 +76,7 @@ $(document).ready(function () {
             event.preventDefault();
         }
         if (event.key == " ") {
-            let spawnLoc = vecAdd(playerObj.rigidBody.position, vecScalarMultiply(playerObj.rigidBody.getForward(), -playerObj.rigidBody.radius));
+            let spawnLoc = vecAdd(playerObj.rigidBody.position, vecScalarMultiply(playerObj.rigidBody.getForward(), -playerObj.rigidBody.height));
             playerBullets.push(createBulletAt(spawnLoc.x, spawnLoc.y, playerObj.rigidBody.rotation));
             event.preventDefault();
         }

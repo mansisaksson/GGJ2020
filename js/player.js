@@ -2,7 +2,7 @@ function createPlayerAt(x, y) {
     return {
         throttle: 0,
         stearing: 0,
-        rigidBody: createRigidBody(x, y, 0, 1, 50),
+        rigidBody: createRigidBody(x, y, 0, 10, 50, 50),
         playerSpeed: 1000.0,
         turnSpeed: 15.0,
         playerShipASCII: `.
@@ -13,7 +13,7 @@ function createPlayerAt(x, y) {
 '   '`,
 
         update: function (deltaTime) {
-            this.rigidBody.addForce(vecScalarMultiply(this.rigidBody.getForward(), this.playerSpeed * this.throttle));
+            this.rigidBody.addForce(vecScalarMultiply(this.rigidBody.getForward(), this.rigidBody.mass * this.playerSpeed * this.throttle));
             this.rigidBody.addTorque(this.stearing * this.turnSpeed);
         },
 

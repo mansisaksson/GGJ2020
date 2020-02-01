@@ -1,6 +1,6 @@
 function createBulletAt(x, y, rotation) {
     return {
-        rigidBody: createRigidBody(x, y, rotation),
+        rigidBody: createRigidBody(x, y, rotation, 1, 10, 10),
         speed: 5000.0,
         bulletASCII: `*`,
         draw: function() {
