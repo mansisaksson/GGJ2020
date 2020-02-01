@@ -74,6 +74,12 @@ function main() {
             playerBullets.push(createBulletAt(playerObj.rigidBody.position.x, playerObj.rigidBody.position.y-20, playerObj.rigidBody.rotation));
             event.preventDefault();
         }
+        if(event.key == "f") {
+            let href = links[0].href;
+            links = new Array();
+            loadWikiPage(href);
+            event.preventDefault();
+        }
 
         updateInput()
     });
@@ -104,7 +110,12 @@ function main() {
     });
 
     requestAnimationFrame(update);
-    
+
+    loadWikiPage('https://en.wikipedia.org/wiki/Special:Random');
+}
+
+function loadWikiPage(href) {
+
     $.ajax({
         type: 'GET',
         url: 'scripts/get_wiki_content.php',
