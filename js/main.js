@@ -7,6 +7,7 @@ var gameDeltaTime = 0.0;
 var gameTime = 0.0;
 var playerObj = null;
 var playerBullets = new Array();
+var particles = new Array();
 var links = new Array();
 var linkPortals = new Array();
 
@@ -19,12 +20,14 @@ function update(time) {
 
     playerObj.update(deltaTime);
     playerBullets.forEach(b => b.update(deltaTime));
+    particles.forEach(b => b.update(deltaTime));
     links.forEach((link) => link.update(deltaTime));
     linkPortals.forEach((lp) => lp.update(deltaTime));
     updatePhysicsScene(deltaTime);
 
     playerObj.draw();
     playerBullets.forEach(b => b.draw());
+    particles.forEach(b => b.draw());
     links.forEach((link) => link.draw());
     linkPortals.forEach((lp) => lp.draw());
 

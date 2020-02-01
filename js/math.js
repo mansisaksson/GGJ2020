@@ -34,3 +34,7 @@ function vecScalarSubtract(vec, scalar) {
 function vecCpy(vec) {
     return { x: vec.x, y: vec.y };
 }
+
+function lerp(v1, v2, alpha) {
+    return (1 - alpha) * v1 + alpha * v2;
+}
