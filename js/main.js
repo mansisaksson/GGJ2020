@@ -30,11 +30,11 @@ function update(time) {
     playerObj.update(deltaTime);
     playerBullets.forEach(b => b.update(deltaTime));
     updatePhysicsScene(deltaTime);
-    
+
     playerObj.draw();
     playerBullets.forEach(b => b.draw());
-	drawPhysicsScene();
-	
+    drawPhysicsScene();
+
     requestAnimationFrame(update);
 }
 
@@ -52,7 +52,7 @@ $(document).ready(function () {
         playerObj.throttle = (keyMap.ArrowUp ? -1 : 0) + (keyMap.ArrowDown ? 1 : 0)
         playerObj.stearing = (keyMap.ArrowLeft ? -1 : 0) + (keyMap.ArrowRight ? 1 : 0)
     }
-    
+
     document.addEventListener('keydown', (event) => {
         if (event.key == "ArrowUp") {
             keyMap.ArrowUp = true;
@@ -71,8 +71,9 @@ $(document).ready(function () {
             keyMap.ArrowRight = true;
             event.preventDefault();
         }
-        if(event.key == " ") {
-            playerBullets.push(createBulletAt(playerObj.rigidBody.position.x, playerObj.rigidBody.position.y-20, playerObj.rigidBody.rotation));
+        if (event.key == " ") {
+            let spawnLoc = vecAdd(playerObj.rigidBody.position, vecScalarMultiply(playerObj.rigidBody.getForward(), -playerObj.rigidBody.radius));
+            playerBullets.push(createBulletAt(spawnLoc.x, spawnLoc.y, playerObj.rigidBody.rotation));
             event.preventDefault();
         }
 
@@ -97,7 +98,7 @@ $(document).ready(function () {
             keyMap.ArrowRight = false;
             event.preventDefault();
         }
-        if(event.key == " ") {
+        if (event.key == " ") {
             event.preventDefault();
         }
 
