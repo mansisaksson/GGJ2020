@@ -27,8 +27,6 @@ function update(time) {
 
     ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
 
-    //drawTextAt(250, 250, 0, testDrawString, { fontSize: 24 })
-
     playerObj.update(deltaTime);
     playerBullets.forEach(b => b.update(deltaTime));
     updatePhysicsScene(deltaTime);

@@ -26,4 +26,6 @@ function drawCircleAt(xPos, yPos, radius) {
     ctx.translate(xPos, yPos);
     
     // plz do dis tobias
+    
+    ctx.restore();
 }

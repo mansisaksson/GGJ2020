@@ -85,13 +85,14 @@ function updatePhysicsScene(deltaTime) {
         }
     }
 
-    rigidBodies.forEach((rb1, i1) => {
-        rigidBodies.forEach((rb2, i2) => {
-            if (i1 != i2) {
-                calculateRigidBodyCollision(rb1, rb2);
-            }
-        });
-    });
+    // TODO: Collision
+    // rigidBodies.forEach((rb1, i1) => {
+    //     rigidBodies.forEach((rb2, i2) => {
+    //         if (i1 != i2) {
+    //             calculateRigidBodyCollision(rb1, rb2);
+    //         }
+    //     });
+    // });
 }
 
 function drawPhysicsScene() {
