@@ -1,3 +1,2 @@
 <?php
-$data = file_get_contents('https://www.wikipedia.org/');
-echo($data);
+echo(file_get_contents($_GET["Site"]));
