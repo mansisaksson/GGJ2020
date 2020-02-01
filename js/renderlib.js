@@ -1,11 +1,13 @@
 var defaultFontSize = 24;
 
-function drawTextAt(xPos, yPos, angle, text, options) {
+function drawTextAt(xPos, yPos, angle, text, options = {}) {
     ctx.save();
     ctx.translate(xPos, yPos);
     ctx.rotate(angle);
+    if(options.offset) {
+        ctx.translate(options.offset.x, options.offset.y);
+    }
 
-    options = options ? options : {};
     let fontSize = options.fontSize ? options.fontSize : defaultFontSize;
 
     ctx.font = options.font ? options.font : fontSize + 'px Consolas';

@@ -61,8 +61,8 @@ function createRigidBody(bodyType, xPos, yPos, rot, radius, isKinematic = false,
         }
     }
 
-    rigidBodies.push(rigidBody)
-    return rigidBody
+    rigidBodies.push(rigidBody);
+    return rigidBody;
 }
 
 function destroyRigidBody(rigidBody) {

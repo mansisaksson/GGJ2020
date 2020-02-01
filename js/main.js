@@ -120,7 +120,7 @@ function main() {
 
     loadWikiPage('https://en.wikipedia.org/wiki/Special:Random');
 }
-const linksToSpawn = 50;
+const linksToSpawn = 10;
 function loadWikiPage(href) {
     for(let i = 0; i < linkPortals.length; i++) {
         destroyLinkPortalByRigidBody(linkPortals[i].rigidBody);
@@ -141,6 +141,10 @@ function loadWikiPage(href) {
             let domparser = new DOMParser();
             wikiDOM = domparser.parseFromString(data, 'text/html');
 
+            if(!document.getElementById('wiki-title') && !wikiDOM.getElementById('firstHeading')){
+                var GAMEOVER = TRUE;
+                return;
+            }
             var title = document.getElementById('wiki-title');
             if(wikiDOM.getElementById('firstHeading')) {
                 title.innerHTML = wikiDOM.getElementById('firstHeading').innerHTML;
@@ -153,19 +157,26 @@ function loadWikiPage(href) {
             
             // todo :: remove duplicates
 
-            var anchorsToKeep = new Array();
+            anchorsToSpawn = new Array();
             if(anchorsToCreateLinksFrom.length > linksToSpawn) {
                 for(let i = 0; i < linksToSpawn; i++) {
-                    anchorsToKeep.push(anchorsToCreateLinksFrom[getRandomInt(anchorsToCreateLinksFrom.length)]);
+                    anchorsToSpawn.push(anchorsToCreateLinksFrom[getRandomInt(anchorsToCreateLinksFrom.length)]);
                 }
-                anchorsToCreateLinksFrom = anchorsToKeep;
+            }
+            else {
+                for(let i = 0; i < anchorsToCreateLinksFrom.length; i++) {
+                    anchorsToSpawn.push(anchorsToCreateLinksFrom[i]);
+                }
             }
 
-            createLinksOverTime(anchorsToCreateLinksFrom);
+            prevTime = 0;
+            createLinksOverTime(0);
         }
     });
 }
 var anchorsToCreateLinksFrom;
+var anchorsToSpawn;
+
 function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
   }
@@ -179,10 +190,13 @@ function createLinksOverTime(time) {
     timeToNextLink -= deltaTime;
 
     if(timeToNextLink > 0) {
+        if(anchorsToSpawn.length > 0) {
+            requestAnimationFrame(createLinksOverTime);
+        }
         return;
     }
 
-    timeToNextLink = 0.4;
+    timeToNextLink = 1.3;
 
     var quadrant = getRandomInt(4);
 
@@ -206,10 +220,10 @@ function createLinksOverTime(time) {
         linkPosY = 100 + Math.random() * (gameCanvas.height-100);
     }
 
-    links.push(createLinkAt(linkPosX, linkPosY, linkRotation, anchorsToCreateLinksFrom[0]));
-    anchorsToCreateLinksFrom.splice(0,1);
+    links.push(createLinkAt(linkPosX, linkPosY, linkRotation, anchorsToSpawn[0]));
+    anchorsToSpawn.splice(0,1);
 
-    if(anchorsToCreateLinksFrom.length > 0) {
+    if(anchorsToSpawn.length > 0) {
         requestAnimationFrame(createLinksOverTime);
     }
 }
