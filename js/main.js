@@ -47,7 +47,7 @@ function main() {
 }
 
 function update(time) {
-    let deltaTime = time - gameTime;
+    let deltaTime = (time - gameTime) / 1000.0;
     gameTime = time;
 
     ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
@@ -55,6 +55,8 @@ function update(time) {
     //drawTextAt(250, 250, 0, testDrawString, { fontSize: 24 })
 
     playerObj.update(deltaTime);
+    simulatePhysicsScene(deltaTime);
+    playerObj.draw();
 
     requestAnimationFrame(update);
 }

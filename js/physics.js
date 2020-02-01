@@ -1,39 +1,47 @@
+var rigidBodies = []
+
 function createRigidBody(xPos, yPos, rot) {
-    return {
+    let rigidBody = {
         position: { x: xPos, y: yPos },
         prevPosition: { x: xPos, y: yPos },
         rotation: rot,
         velocity: { x: 0, y: 0 },
-        spin: 0,
+        angularVelocity: 0,
         force: { x: 0, y: 0 },
         torque: 0,
         mass: 1,
-        linearDampening: 0.1,
+        linearDampening: 0.05,
         angularDampening: 0.1,
         radius: 1,
         addForce: function (vec) {
-            vecAdd(vec)
+            this.force = vecAdd(this.force, vec)
         },
         getForward: function () {
-            
+            const halfPi = (3.14 / 2);
+            return { x: Math.cos(this.rotation + halfPi), y: Math.sin(this.rotation + halfPi) };
         }
     }
-}
 
-var rigidBodies = []
+    rigidBodies.push(rigidBody)
+    return rigidBody
+}
 
 function simulatePhysicsScene(deltaTime) {
     // integrate physics
-    rigidBodies.forEach(rigidBody => {
-        let invMass = 1.0 / rigidBody.mass;
-        let newPos = vecScalarMultiply(rigidBody.position, (2.0 - rigidBody.linearDampening));
-        newPos = vecSubtract(newPos, vecScalarMultiply(rigidBody.prevPosition, (1.0 - rigidBody.linearDampening)))
-        newPos = vecAdd(newPos, vecScalarMultiply(rigidBody.force, invMass * deltaTime * deltaTime));
+    rigidBodies.forEach(rb => {
+        let invMass = 1.0 / rb.mass;
+        let newPos = vecScalarMultiply(rb.position, (2.0 - rb.linearDampening));
+        newPos = vecSubtract(newPos, vecScalarMultiply(rb.prevPosition, (1.0 - rb.linearDampening)))
+        newPos = vecAdd(newPos, vecScalarMultiply(rb.force, invMass * deltaTime * deltaTime));
 
-        rigidBody.prevPosition = rigidBody.position;
-        rigidBody.position = newPos;
+        rb.prevPosition = vecCpy(rb.position);
+        rb.position = vecCpy(newPos);
 
-        rigidBody.force = 0
+        rb.force = { x: 0, y: 0 };
+
+        // rb.rotation += 0.5 * rb.angularVelocity * deltaTime;
+        // rb.angularVelocity += rb.torque * deltaTime;
+        // rb.rotation += 0.5 * rb.angularVelocity * deltaTime;
 
         // todo: torque
     })
