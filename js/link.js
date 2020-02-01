@@ -20,11 +20,5 @@ function createLinkAt(x, y, rotation, anchorElement) {
 }
 
 function destroyLinkByRigidBody(rb) {
-    for (let i = 0; i < links.length; i++) {
-        if (links[i].rigidBody.index == rb.index) {
-            links.splice(i, 1);
-            break;
-        }
-    }
     destroyRigidBody(rb);
 }
