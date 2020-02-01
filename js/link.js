@@ -19,7 +19,7 @@ function createLinkAt(x, y, rotation, anchorElement) {
             let end = vecAdd(this.rigidBody.position, vecScalarMultiply(this.rigidBody.getRight(), this.textSize.x / 2));
             let hits = lineTrace(start, end, "bullet", 12)
             if (hits.length > 0) {
-                linkPortals.push(createLinkPortalAt(link));
+                linkPortals.push(createLinkPortalAt(this));
                 destroyLinkByRigidBody(this.rigidBody);
                 destroyBulletByRigidBody(hits[0]);
             }
