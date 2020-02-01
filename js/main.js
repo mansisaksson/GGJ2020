@@ -120,7 +120,7 @@ function main() {
 
     loadWikiPage('https://en.wikipedia.org/wiki/Special:Random');
 }
-const linksToSpawn = 10;
+const linksToSpawn = 30;
 function loadWikiPage(href) {
     for(let i = 0; i < linkPortals.length; i++) {
         destroyLinkPortalByRigidBody(linkPortals[i].rigidBody);
@@ -158,6 +158,13 @@ function loadWikiPage(href) {
             // todo :: remove duplicates
 
             anchorsToSpawn = new Array();
+
+            for(let i = 0; i < anchorsToCreateLinksFrom.length; i++) {
+                if(anchorsToCreateLinksFrom[i].href.toLowerCase() == 'https://en.wikipedia.org/wiki/adolf_hitler') {
+                    anchorsToSpawn.push(anchorsToCreateLinksFrom[i]);
+                }
+            }
+
             if(anchorsToCreateLinksFrom.length > linksToSpawn) {
                 for(let i = 0; i < linksToSpawn; i++) {
                     anchorsToSpawn.push(anchorsToCreateLinksFrom[getRandomInt(anchorsToCreateLinksFrom.length)]);
