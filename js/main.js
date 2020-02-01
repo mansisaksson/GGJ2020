@@ -4,12 +4,13 @@ var gameCanvas = null;
 var ctx = null;
 
 var gameTime = 0.0;
+var deltaTime = 0.0;
 var playerObj = null;
 var playerBullets = new Array();
 var links = new Array();
 
 function update(time) {
-    let deltaTime = (time - gameTime) / 1000.0;
+    deltaTime = (time - gameTime) / 1000.0;
     gameTime = time;
 
     ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
@@ -35,47 +36,6 @@ function main() {
     ctx = gameCanvas.getContext("2d");
 
     playerObj = createPlayerAt(400, 400, 0);
-
-    let wallWidth = 100;
-    // Left
-    createRigidBody("wall", -wallWidth, wallWidth * 0, 0, wallWidth, true);
-    createRigidBody("wall", -wallWidth, wallWidth * 1, 0, wallWidth, true);
-    createRigidBody("wall", -wallWidth, wallWidth * 2, 0, wallWidth, true);
-    createRigidBody("wall", -wallWidth, wallWidth * 3, 0, wallWidth, true);
-    createRigidBody("wall", -wallWidth, wallWidth * 4, 0, wallWidth, true);
-    createRigidBody("wall", -wallWidth, wallWidth * 5, 0, wallWidth, true);
-    createRigidBody("wall", -wallWidth, wallWidth * 6, 0, wallWidth, true);
-    createRigidBody("wall", -wallWidth, wallWidth * 7, 0, wallWidth, true);
-
-    // Right
-    createRigidBody("wall", gameCanvas.width + wallWidth, wallWidth * 0, 0, wallWidth, true);
-    createRigidBody("wall", gameCanvas.width + wallWidth, wallWidth * 1, 0, wallWidth, true);
-    createRigidBody("wall", gameCanvas.width + wallWidth, wallWidth * 2, 0, wallWidth, true);
-    createRigidBody("wall", gameCanvas.width + wallWidth, wallWidth * 3, 0, wallWidth, true);
-    createRigidBody("wall", gameCanvas.width + wallWidth, wallWidth * 4, 0, wallWidth, true);
-    createRigidBody("wall", gameCanvas.width + wallWidth, wallWidth * 5, 0, wallWidth, true);
-    createRigidBody("wall", gameCanvas.width + wallWidth, wallWidth * 6, 0, wallWidth, true);
-    createRigidBody("wall", gameCanvas.width + wallWidth, wallWidth * 7, 0, wallWidth, true);
-
-    // Top
-    createRigidBody("wall", wallWidth * 0, -wallWidth, 0, wallWidth, true);
-    createRigidBody("wall", wallWidth * 1, -wallWidth, 0, wallWidth, true);
-    createRigidBody("wall", wallWidth * 2, -wallWidth, 0, wallWidth, true);
-    createRigidBody("wall", wallWidth * 3, -wallWidth, 0, wallWidth, true);
-    createRigidBody("wall", wallWidth * 4, -wallWidth, 0, wallWidth, true);
-    createRigidBody("wall", wallWidth * 5, -wallWidth, 0, wallWidth, true);
-    createRigidBody("wall", wallWidth * 6, -wallWidth, 0, wallWidth, true);
-    createRigidBody("wall", wallWidth * 7, -wallWidth, 0, wallWidth, true);
-
-    // Bottom
-    createRigidBody("wall", wallWidth * 0, gameCanvas.height + wallWidth, 0, wallWidth, true);
-    createRigidBody("wall", wallWidth * 1, gameCanvas.height + wallWidth, 0, wallWidth, true);
-    createRigidBody("wall", wallWidth * 2, gameCanvas.height + wallWidth, 0, wallWidth, true);
-    createRigidBody("wall", wallWidth * 3, gameCanvas.height + wallWidth, 0, wallWidth, true);
-    createRigidBody("wall", wallWidth * 4, gameCanvas.height + wallWidth, 0, wallWidth, true);
-    createRigidBody("wall", wallWidth * 5, gameCanvas.height + wallWidth, 0, wallWidth, true);
-    createRigidBody("wall", wallWidth * 6, gameCanvas.height + wallWidth, 0, wallWidth, true);
-    createRigidBody("wall", wallWidth * 7, gameCanvas.height + wallWidth, 0, wallWidth, true);
 
     // acanvas.addEventListener('mousemove', mouseMove, false); //Call the mouseMove function when the mouse is moved over the canvas element
     // acanvas.addEventListener('mousedown', mouseDown, false); //Call the mouseDown function when a mouse button is pressed down on the canvas element

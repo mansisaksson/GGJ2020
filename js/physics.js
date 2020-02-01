@@ -47,6 +47,14 @@ function createRigidBody(bodyType, xPos, yPos, rot, radius, isKinematic = false,
         getForward: function () {
             const halfPi = (3.14 / 2);
             return { x: Math.cos(this.rotation + halfPi), y: Math.sin(this.rotation + halfPi) };
+        },
+        setVelocity: function (newVel) {
+            this.prevPosition = vecSubtract(this.position, vecScalarMultiply(newVel, deltaTime));
+            this.velocity = newVel;
+        },
+        setLocation: function (newLoc) {
+            this.position = newLoc;
+            this.prevPosition = vecSubtract(this.position, vecScalarMultiply(this.velocity, -1));
         }
     }
 
@@ -84,6 +92,33 @@ function updatePhysicsScene(deltaTime) {
         rb.torque = 0;
     }
 
+    function calculateWallCollision(rb) {
+        const wallBounciness = 0.5;
+        let leftDepth = rb.position.x - rb.radius;
+        if (leftDepth < 0) {
+            rb.position.x = rb.position.x - leftDepth;
+            rb.setVelocity({ x: rb.velocity.x * -wallBounciness, y: rb.velocity.y })
+        }
+
+        let rightDepth = gameCanvas.width - (rb.position.x + rb.radius);
+        if (rightDepth < 0) {
+            rb.position.x = rb.position.x + rightDepth;
+            rb.setVelocity({ x: rb.velocity.x * -wallBounciness, y: rb.velocity.y })
+        }
+
+        let topDepth = rb.position.y - rb.radius;
+        if (topDepth < 0) {
+            rb.position.y = rb.position.y - topDepth;
+            rb.setVelocity({ x: rb.velocity.x, y: rb.velocity.y * -wallBounciness })
+        }
+
+        let botDepth = gameCanvas.height - (rb.position.y + rb.radius);
+        if (botDepth < 0) {
+            rb.position.y = rb.position.y + botDepth;
+            rb.setVelocity({ x: rb.velocity.x, y: rb.velocity.y * -wallBounciness })
+        }
+    }
+
     function calculateRigidBodyCollision(rb1, rb2) {
         let relativePosition = vecSubtract(rb1.position, rb2.position);
         let rbDistance = vecLength(relativePosition);
@@ -92,13 +127,13 @@ function updatePhysicsScene(deltaTime) {
             if (rb1.collisionResponse[rb2.bodyType] == "ignore" || rb2.collisionResponse[rb1.bodyType] == "ignore") {
                 return;
             }
-    
+
             if (rb1.collisionResponse[rb2.bodyType] == "overlap" || rb2.collisionResponse[rb1.bodyType] == "overlap") {
                 rb1.onOverlap(rb2);
                 rb2.onOverlap(rb1);
                 return;
             }
-    
+
             rb1.onCollide(rb2);
             rb2.onCollide(rb1);
 
@@ -118,9 +153,7 @@ function updatePhysicsScene(deltaTime) {
                 rb1.position = vecSubtract(rb1.position, vecScalarMultiply(collisionAngle, penetrationDepth * moveScalar));
 
                 // Set new velocity
-                //let v1 = vecSubtract(rb1.velocity, vecScalarMultiply(collisionAngle, optimizedP * rb1.mass));
-                //rb1.prevPosition = vecSubtract(rb1.position, vecScalarMultiply(v1, deltaTime));
-                //rb1.velocity = v1;
+                rb1.setVelocity(vecSubtract(rb1.velocity, vecScalarMultiply(collisionAngle, optimizedP * rb1.mass)));
             }
             if (!rb2.isKinematic) {
                 // Move the body so that they are not overlapping
@@ -128,9 +161,7 @@ function updatePhysicsScene(deltaTime) {
                 rb2.position = vecSubtract(rb2.position, vecScalarMultiply(collisionAngle, penetrationDepth * moveScalar));
 
                 // Set new velocity
-                //let v2 = vecAdd(rb2.velocity, vecScalarMultiply(collisionAngle, optimizedP * rb2.mass));
-                //rb2.prevPosition = vecSubtract(rb2.position, vecScalarMultiply(v2, deltaTime));
-                //rb2.velocity = v2;
+                rb2.setVelocity(vecAdd(rb2.velocity, vecScalarMultiply(collisionAngle, optimizedP * rb2.mass)));
             }
         }
     }
@@ -138,6 +169,7 @@ function updatePhysicsScene(deltaTime) {
     rigidBodies.forEach((rb, i) => {
         if (!rb.isKinematic) {
             updateRigidBodyMovement(rb)
+            calculateWallCollision(rb)
         }
         else {
             rb.velocity = { x: 0, y: 0 };
