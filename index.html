@@ -5,16 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <head>
     <title>Page Title</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="./js/math.js"></script>
-    <script src="./js/physics.js"></script>
-    <script src="./js/bullet.js"></script>
-    <script src="./js/player.js"></script>
-    <script src="./js/renderlib.js"></script>
-    <script src="./js/main.js"></script>
-    <link rel="stylesheet" href="./css/styles.css">
+    <script src="js/external/jquery3.4.1.min.js"></script>
+    <script src="js/math.js"></script>
+    <script src="js/physics.js"></script>
+    <script src="js/bullet.js"></script>
+    <script src="js/link.js"></script>
+    <script src="js/player.js"></script>
+    <script src="js/renderlib.js"></script>
+    <script src="js/main.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
 </head> 
-<body>
+<body onload='main()'>
     <canvas id="game-canvas" width="800" height="800" style="border-width: 5px; border-style: solid;">
     </canvasy>
 </html>

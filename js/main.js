@@ -5,6 +5,29 @@ var ctx = null;
 
 var gameTime = 0.0;
 var playerObj = null;
+var playerBullets = new Array();
+var links = new Array();
+
+
+function update(time) {
+    let deltaTime = (time - gameTime) / 1000.0;
+    gameTime = time;
+
+    ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+
+    playerObj.update(deltaTime);
+    playerBullets.forEach(b => b.update(deltaTime));
+    links.forEach((link) => link.update(deltaTime));
+    updatePhysicsScene(deltaTime);
+    
+    playerObj.draw();
+    playerBullets.forEach(b => b.draw());
+    links.forEach((link) => link.draw());
+
+	drawPhysicsScene();
+	
+    requestAnimationFrame(update);
+}
 
 function main() {
     /** @type {HTMLCanvasElement} */
@@ -17,30 +40,6 @@ function main() {
     // acanvas.addEventListener('mousemove', mouseMove, false); //Call the mouseMove function when the mouse is moved over the canvas element
     // acanvas.addEventListener('mousedown', mouseDown, false); //Call the mouseDown function when a mouse button is pressed down on the canvas element
     // acanvas.addEventListener('contextmenu', function(event){console.log("onContextMenu");event.preventDefault();}, false); //Prevent the context menu to be displayed when right mouse button is clicked on the canvas
-
-    requestAnimationFrame(update);
-}
-
-function update(time) {
-    let deltaTime = (time - gameTime) / 1000.0;
-    gameTime = time;
-
-    ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
-
-    playerObj.update(deltaTime);
-    playerBullets.forEach(b => b.update(deltaTime));
-    updatePhysicsScene(deltaTime);
-
-    playerObj.draw();
-    playerBullets.forEach(b => b.draw());
-    drawPhysicsScene();
-
-    requestAnimationFrame(update);
-}
-
-var playerBullets = new Array();
-
-$(document).ready(function () {
     var keyMap = {
         ArrowUp: false,
         ArrowDown: false,
@@ -52,7 +51,7 @@ $(document).ready(function () {
         playerObj.throttle = (keyMap.ArrowUp ? -1 : 0) + (keyMap.ArrowDown ? 1 : 0)
         playerObj.stearing = (keyMap.ArrowLeft ? -1 : 0) + (keyMap.ArrowRight ? 1 : 0)
     }
-
+    
     document.addEventListener('keydown', (event) => {
         if (event.key == "ArrowUp") {
             keyMap.ArrowUp = true;
@@ -71,9 +70,8 @@ $(document).ready(function () {
             keyMap.ArrowRight = true;
             event.preventDefault();
         }
-        if (event.key == " ") {
-            let spawnLoc = vecAdd(playerObj.rigidBody.position, vecScalarMultiply(playerObj.rigidBody.getForward(), -playerObj.rigidBody.radius));
-            playerBullets.push(createBulletAt(spawnLoc.x, spawnLoc.y, playerObj.rigidBody.rotation));
+        if(event.key == " ") {
+            playerBullets.push(createBulletAt(playerObj.rigidBody.position.x, playerObj.rigidBody.position.y-20, playerObj.rigidBody.rotation));
             event.preventDefault();
         }
 
@@ -98,26 +96,45 @@ $(document).ready(function () {
             keyMap.ArrowRight = false;
             event.preventDefault();
         }
-        if (event.key == " ") {
+        if(event.key == " ") {
             event.preventDefault();
         }
 
         updateInput();
     });
 
-    main();
-
+    requestAnimationFrame(update);
+    
     $.ajax({
         type: 'GET',
-        url: '../scripts/get_wiki_content.php',
+        url: 'scripts/get_wiki_content.php',
         dataType: "text",
         data: {
-            Country: "Japan"
+            Site: "https://en.wikipedia.org/wiki/Special:Random"
         },
         success: function (data) {
             let domparser = new DOMParser();
-            let doc = domparser.parseFromString(data, 'text/html');
-            console.log(doc.getElementsByTagName('a'));
+            wikiDOM = domparser.parseFromString(data, 'text/html');
+            var anchors = getLinksFromWikiPage(wikiDOM);
+            anchors.forEach((a) => links.push(createLinkAt(100 + Math.random() * 500, 100, (Math.random()-0.5) * 1, a)));
         }
     });
-});
+}
+
+var wikiDOM;
+function getLinksFromWikiPage(document) {
+    var divArticle = document.getElementById("mw-content-text");
+    let unfilteredAnchors = divArticle.getElementsByTagName('a');
+    let anchors = new Array();
+    for(let i = 0; i < unfilteredAnchors.length; i++) {
+        let a = unfilteredAnchors[i];
+        if(a.href) {
+            let url = new URL(a.href);
+            if(url.hostname = 'localhost' && url.pathname.startsWith('\/wiki\/') && !url.pathname.includes(':')) {
+                a.href = 'https://en.wikipedia.org'+url.pathname;
+                anchors.push(a);
+            }
+        }
+    }
+    return anchors;
+}
