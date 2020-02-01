@@ -3,7 +3,7 @@ function createLinkPortalAt(link) {
         rigidBody: createRigidBody("linkPortal", link.rigidBody.position.x, link.rigidBody.position.y, link.rigidBody.rotation, 20, false, { 
             collisionResponse: {
                 player: "overlap",
-                wall: "ignore",
+                wall: "collide",
                 link: "ignore"
             },
             onOverlap: function (rb) {
@@ -42,6 +42,12 @@ function createLinkPortalAt(link) {
                 }
                 destroyLinkPortalByRigidBody(this.rigidBody);
                 linkPortals.splice(linkPortalIndex, 1);
+
+                anchorsToSpawn.push(anchorsToCreateLinksFrom[getRandomInt(anchorsToCreateLinksFrom.length)]);
+                if(anchorsToSpawn.length == 1) {
+                    prevTime = 0;
+                    requestAnimationFrame(createLinksOverTime);
+                }
             }
             else if(this.timeToDeath <= 1) {
                 this.linkAnimateTime = 0.1;
