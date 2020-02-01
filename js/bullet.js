@@ -8,8 +8,19 @@ function createBulletAt(x, y, rotation) {
                 link: "overlap"
             },
             onOverlap: function (rb) {
+                let link;
+                for (let i = 0; i < links.length; i++) {
+                    if (links[i].rigidBody.index == rb.index) {
+                        link = links[i];
+                        break;
+                    }
+                }
                 destroyLinkByRigidBody(rb)
                 destroyBulletByRigidBody(this)
+
+                if(link) {
+                    loadWikiPage(link.href);
+                }
             } 
         }),
         speed: 1000.0,

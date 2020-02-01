@@ -116,9 +116,7 @@ function main() {
             event.preventDefault();
         }
         if (event.key == "f") {
-            let href = links[0].href;
-            links = new Array();
-            loadWikiPage(href);
+            loadWikiPage(links[0].href);
             event.preventDefault();
         }
 
@@ -156,12 +154,16 @@ function main() {
 }
 
 function loadWikiPage(href) {
+    for(let i = 0; i < links.length; i++) {
+        destroyLinkByRigidBody(links[i].rigidBody);
+    }
+    links = new Array();
     $.ajax({
         type: 'GET',
         url: 'scripts/get_wiki_content.php',
         dataType: "text",
         data: {
-            Site: "https://en.wikipedia.org/wiki/Special:Random"
+            Site: href
         },
         success: function (data) {
             let domparser = new DOMParser();
