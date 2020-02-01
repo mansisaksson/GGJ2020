@@ -31,8 +31,6 @@ function update(time) {
     playerBullets.forEach(b => b.update(deltaTime));
     updatePhysicsScene(deltaTime);
     
-    simulatePhysicsScene(deltaTime);
-    
     playerObj.draw();
     playerBullets.forEach(b => b.draw());
 	drawPhysicsScene();
