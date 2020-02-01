@@ -13,10 +13,8 @@ function createPlayerAt(x, y) {
 '   '`,
 
         update: function (deltaTime) {
-            let force = vecScalarMultiply(this.rigidBody.getForward(), this.playerSpeed * this.throttle)
-            this.rigidBody.addForce(force)
-            let torque = this.stearing * this.turnSpeed;
-            this.rigidBody.addTorque(torque)
+            this.rigidBody.addForce(vecScalarMultiply(this.rigidBody.getForward(), this.playerSpeed * this.throttle));
+            this.rigidBody.addTorque(this.stearing * this.turnSpeed);
         },
 
         draw: function() {

@@ -1,6 +1,6 @@
 var rigidBodies = []
 
-function createRigidBody(xPos, yPos, rot) {
+function createRigidBody(xPos, yPos, rot, mass, radius, linearDampening, angularDampening) {
     let rigidBody = {
         position: { x: xPos, y: yPos },
         prevPosition: { x: xPos, y: yPos },
@@ -9,10 +9,10 @@ function createRigidBody(xPos, yPos, rot) {
         angularVelocity: 0,
         force: { x: 0, y: 0 },
         torque: 0,
-        mass: 1,
-        linearDampening: 0.02,
-        angularDampening: 10.0,
-        radius: 1,
+        mass: mass ? mass : 1,
+        linearDampening: linearDampening ? linearDampening : 0.02,
+        angularDampening: angularDampening ? angularDampening : 10.0,
+        radius: radius ? radius : 1,
         addForce: function (vec) {
             this.force = vecAdd(this.force, vec)
         },
