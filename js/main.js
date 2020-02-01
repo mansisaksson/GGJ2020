@@ -4,6 +4,7 @@ var gameCanvas = null;
 var ctx = null;
 
 var gameTime = 0.0;
+var playerObj = null;
 
 function drawTextAt(xPos, yPos, angle, text, options) {
     ctx.save();
@@ -35,6 +36,8 @@ function main() {
     gameCanvas = document.getElementById("game-canvas");
     /** @type {CanvasRenderingContext2D} */
     ctx = gameCanvas.getContext("2d");
+
+    playerObj = createPlayerAt(400, 400, 0);
 
     // acanvas.addEventListener('mousemove', mouseMove, false); //Call the mouseMove function when the mouse is moved over the canvas element
     // acanvas.addEventListener('mousedown', mouseDown, false); //Call the mouseDown function when a mouse button is pressed down on the canvas element
