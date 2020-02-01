@@ -49,7 +49,7 @@ function createRigidBody(bodyType, xPos, yPos, rot, radius, isKinematic = false,
             return { x: Math.cos(this.rotation + halfPi), y: Math.sin(this.rotation + halfPi) };
         },
         setVelocity: function (newVel) {
-            this.prevPosition = vecSubtract(this.position, vecScalarMultiply(newVel, deltaTime));
+            this.prevPosition = vecSubtract(this.position, vecScalarMultiply(newVel, gameDeltaTime));
             this.velocity = newVel;
         },
         setLocation: function (newLoc) {

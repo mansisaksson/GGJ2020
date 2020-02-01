@@ -3,6 +3,7 @@ var gameCanvas = null;
 /** @type {CanvasRenderingContext2D} */
 var ctx = null;
 
+var gameDeltaTime = 0.0;
 var gameTime = 0.0;
 var playerObj = null;
 var playerBullets = new Array();
@@ -12,17 +13,20 @@ var linkPortals = new Array();
 function update(time) {
     let deltaTime = (time - gameTime) / 1000.0;
     gameTime = time;
+    gameDeltaTime = deltaTime;
 
     ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
 
     playerObj.update(deltaTime);
     playerBullets.forEach(b => b.update(deltaTime));
     links.forEach((link) => link.update(deltaTime));
+    linkPortals.forEach((lp) => lp.update(deltaTime));
     updatePhysicsScene(deltaTime);
 
     playerObj.draw();
     playerBullets.forEach(b => b.draw());
     links.forEach((link) => link.draw());
+    linkPortals.forEach((lp) => lp.draw());
 
     drawPhysicsScene();
 
@@ -114,6 +118,10 @@ function main() {
 }
 const linksToSpawn = 50;
 function loadWikiPage(href) {
+    for(let i = 0; i < linkPortals.length; i++) {
+        destroyLinkPortalByRigidBody(linkPortals[i].rigidBody);
+    }
+    linkPortals = new Array();
     for(let i = 0; i < links.length; i++) {
         destroyLinkByRigidBody(links[i].rigidBody);
     }
@@ -165,7 +173,6 @@ function createLinksOverTime(time) {
     prevTime = time;
 
     timeToNextLink -= deltaTime;
-    
 
     if(timeToNextLink > 0) {
         return;

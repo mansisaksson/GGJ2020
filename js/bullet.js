@@ -15,12 +15,9 @@ function createBulletAt(x, y, rotation) {
                         break;
                     }
                 }
-                destroyLinkByRigidBody(rb)
-                destroyBulletByRigidBody(this)
-
-                if(link) {
-                    loadWikiPage(link.href);
-                }
+                linkPortals.push(createLinkPortalAt(link));
+                destroyLinkByRigidBody(rb);
+                destroyBulletByRigidBody(this);
             } 
         }),
         speed: 1000.0,

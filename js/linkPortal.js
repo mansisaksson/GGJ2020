@@ -1,6 +1,15 @@
-function createLinkPortalAt(x, y, rotation, link) {
-    return {
-        rigidBody: createRigidBody("linkPortal", x, y, rotation, 20),
+function createLinkPortalAt(link) {
+    let localLinkP = {
+        rigidBody: createRigidBody("linkPortal", link.rigidBody.position.x, link.rigidBody.position.y+link.rigidBody.radius, link.rigidBody.rotation, 20, false, { 
+            collisionResponse: {
+                player: "overlap",
+                wall: "ignore",
+                link: "ignore"
+            },
+            onOverlap: function (rb) {
+                loadWikiPage(localLinkP.href);
+            }
+        }),
         speed: 1.0,
         linkAscii: linkFrame1,
         timeToNextFrame: linkAnimateTime,
@@ -18,8 +27,8 @@ function createLinkPortalAt(x, y, rotation, link) {
             let force = vecScalarMultiply(this.rigidBody.getForward(), this.speed);
             this.rigidBody.addForce(force);
 
-            timeToDeath -= deltaTime;
-            if(timeToDeath <= 0) {
+            this.timeToDeath -= deltaTime;
+            if(this.timeToDeath <= 0) {
                 let linkPortalIndex;
                 for(let i = 0; i < linkPortals.length; i++) {
                     if(linkPortals[i] == this) {
@@ -37,18 +46,19 @@ function createLinkPortalAt(x, y, rotation, link) {
                 linkAnimateTime = 0.2;
             }
 
-            timeToNextFrame -= deltaTime;
-            if(timeToNextFrame <= 0) {
-                timeToNextFrame = linkAnimateTime;
+            this.timeToNextFrame -= deltaTime;
+            if(this.timeToNextFrame <= 0) {
+                this.timeToNextFrame = linkAnimateTime;
                 if(this.linkAscii == linkFrame1) {
                     this.linkAscii = linkFrame2;
                 }
                 else {
-                    this.linkAscii = linkFrame2;
+                    this.linkAscii = linkFrame1;
                 }
             }
         }
     }
+    return localLinkP;
 }
 
 function destroyLinkPortalByRigidBody(rb) {
@@ -57,4 +67,4 @@ function destroyLinkPortalByRigidBody(rb) {
 
 const linkFrame1 = '{0}';
 const linkFrame2 = '(0)';
-const linkAnimateTime = 0.4;
+var linkAnimateTime = 0.4;
