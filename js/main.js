@@ -76,7 +76,8 @@ function main() {
         }
 
         if (event.key == " ") {
-            playerBullets.push(createBulletAt(playerObj.rigidBody.position.x, playerObj.rigidBody.position.y - 20, playerObj.rigidBody.rotation));
+            let bulletSpawnLocation = vecAdd(playerObj.rigidBody.position, vecScalarMultiply(playerObj.rigidBody.getForward(), -playerObj.rigidBody.radius));
+            playerBullets.push(createBulletAt(bulletSpawnLocation.x, bulletSpawnLocation.y, playerObj.rigidBody.rotation));
             event.preventDefault();
         }
         if (event.key == "f") {
