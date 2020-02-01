@@ -3,26 +3,30 @@ var gameCanvas = null;
 /** @type {CanvasRenderingContext2D} */
 var ctx = null;
 
+var gameDeltaTime = 0.0;
 var gameTime = 0.0;
-var deltaTime = 0.0;
 var playerObj = null;
 var playerBullets = new Array();
 var links = new Array();
+var linkPortals = new Array();
 
 function update(time) {
-    deltaTime = (time - gameTime) / 1000.0;
+    let deltaTime = (time - gameTime) / 1000.0;
     gameTime = time;
+    gameDeltaTime = deltaTime;
 
     ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
 
     playerObj.update(deltaTime);
     playerBullets.forEach(b => b.update(deltaTime));
     links.forEach((link) => link.update(deltaTime));
+    linkPortals.forEach((lp) => lp.update(deltaTime));
     updatePhysicsScene(deltaTime);
 
     playerObj.draw();
     playerBullets.forEach(b => b.draw());
     links.forEach((link) => link.draw());
+    linkPortals.forEach((lp) => lp.draw());
 
     drawPhysicsScene();
 
@@ -112,8 +116,12 @@ function main() {
 
     loadWikiPage('https://en.wikipedia.org/wiki/Special:Random');
 }
-
+const linksToSpawn = 50;
 function loadWikiPage(href) {
+    for(let i = 0; i < linkPortals.length; i++) {
+        destroyLinkPortalByRigidBody(linkPortals[i].rigidBody);
+    }
+    linkPortals = new Array();
     for(let i = 0; i < links.length; i++) {
         destroyLinkByRigidBody(links[i].rigidBody);
     }
@@ -130,12 +138,76 @@ function loadWikiPage(href) {
             wikiDOM = domparser.parseFromString(data, 'text/html');
 
             var title = document.getElementById('wiki-title');
-            title.innerHTML = wikiDOM.getElementById('firstHeading').innerHTML;
+            if(wikiDOM.getElementById('firstHeading')) {
+                title.innerHTML = wikiDOM.getElementById('firstHeading').innerHTML;
+            }
+            else {
+                title.innerHTML = 'UNKNOWN';
+            }
 
-            var anchors = getLinksFromWikiPage(wikiDOM);
-            anchors.forEach((a) => links.push(createLinkAt(100 + Math.random() * 500, 100, (Math.random() - 0.5) * 1, a)));
+            anchorsToCreateLinksFrom = getLinksFromWikiPage(wikiDOM);
+            
+            // todo :: remove duplicates
+
+            var anchorsToKeep = new Array();
+            if(anchorsToCreateLinksFrom.length > linksToSpawn) {
+                for(let i = 0; i < linksToSpawn; i++) {
+                    anchorsToKeep.push(anchorsToCreateLinksFrom[getRandomInt(anchorsToCreateLinksFrom.length)]);
+                }
+                anchorsToCreateLinksFrom = anchorsToKeep;
+            }
+
+            createLinksOverTime(anchorsToCreateLinksFrom);
         }
     });
+}
+var anchorsToCreateLinksFrom;
+function getRandomInt(max) {
+    return Math.floor(Math.random() * Math.floor(max));
+  }
+
+  var prevTime = 0;
+  var timeToNextLink = 0;
+function createLinksOverTime(time) {
+    let deltaTime = (time - prevTime);
+    prevTime = time;
+
+    timeToNextLink -= deltaTime;
+
+    if(timeToNextLink > 0) {
+        return;
+    }
+
+    timeToNextLink = 0.4;
+
+    var quadrant = getRandomInt(4);
+
+    var linkPosX;
+    var linkPosY;
+    var linkRotation = Math.random()*2*Math.PI;
+    if(quadrant == 0){
+        linkPosX = 100 + Math.random() * (gameCanvas.width-100);
+        linkPosY = 100;
+    }
+    if(quadrant == 1){
+        linkPosX = gameCanvas.width-100;
+        linkPosY = 100 + Math.random() * (gameCanvas.height-100);
+    }
+    else if(quadrant == 2) {
+        linkPosX = 100 + Math.random() * (gameCanvas.width-100);
+        linkPosY = gameCanvas.height-100;
+    }
+    else if(quadrant == 3){
+        linkPosX = 100;
+        linkPosY = 100 + Math.random() * (gameCanvas.height-100);
+    }
+
+    links.push(createLinkAt(linkPosX, linkPosY, linkRotation, anchorsToCreateLinksFrom[0]));
+    anchorsToCreateLinksFrom.splice(0,1);
+
+    if(anchorsToCreateLinksFrom.length > 0) {
+        requestAnimationFrame(createLinksOverTime);
+    }
 }
 
 var wikiDOM;
