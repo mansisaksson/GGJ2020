@@ -2,7 +2,12 @@ function createBulletAt(x, y, rotation) {
     return {
         rigidBody: createRigidBody("bullet", x, y, rotation, 10, false, { 
             linearDampening: 0.001,
-            onCollide: function (rb) {
+            collisionResponse: {
+                player: "ignore",
+                wall: "ignore",
+                link: "overlap"
+            },
+            onOverlap: function (rb) {
                 destroyLinkByRigidBody(rb)
                 destroyBulletByRigidBody(this)
             } 
