@@ -18,13 +18,13 @@ function update(time) {
     playerBullets.forEach(b => b.update(deltaTime));
     links.forEach((link) => link.update(deltaTime));
     updatePhysicsScene(deltaTime);
-    
+
     playerObj.draw();
     playerBullets.forEach(b => b.draw());
     links.forEach((link) => link.draw());
 
-	drawPhysicsScene();
-	
+    drawPhysicsScene();
+
     requestAnimationFrame(update);
 }
 
@@ -36,9 +36,46 @@ function main() {
 
     playerObj = createPlayerAt(400, 400, 0);
 
-    let wallMass = 100000;
     let wallWidth = 100;
-    createRigidBody(0, gameCanvas.height / 2, 0, wallMass, wallWidth, gameCanvas.height, 0, 0, true);
+    // Left
+    createRigidBody("wall", -wallWidth, wallWidth * 0, 0, wallWidth, true);
+    createRigidBody("wall", -wallWidth, wallWidth * 1, 0, wallWidth, true);
+    createRigidBody("wall", -wallWidth, wallWidth * 2, 0, wallWidth, true);
+    createRigidBody("wall", -wallWidth, wallWidth * 3, 0, wallWidth, true);
+    createRigidBody("wall", -wallWidth, wallWidth * 4, 0, wallWidth, true);
+    createRigidBody("wall", -wallWidth, wallWidth * 5, 0, wallWidth, true);
+    createRigidBody("wall", -wallWidth, wallWidth * 6, 0, wallWidth, true);
+    createRigidBody("wall", -wallWidth, wallWidth * 7, 0, wallWidth, true);
+
+    // Right
+    createRigidBody("wall", gameCanvas.width + wallWidth, wallWidth * 0, 0, wallWidth, true);
+    createRigidBody("wall", gameCanvas.width + wallWidth, wallWidth * 1, 0, wallWidth, true);
+    createRigidBody("wall", gameCanvas.width + wallWidth, wallWidth * 2, 0, wallWidth, true);
+    createRigidBody("wall", gameCanvas.width + wallWidth, wallWidth * 3, 0, wallWidth, true);
+    createRigidBody("wall", gameCanvas.width + wallWidth, wallWidth * 4, 0, wallWidth, true);
+    createRigidBody("wall", gameCanvas.width + wallWidth, wallWidth * 5, 0, wallWidth, true);
+    createRigidBody("wall", gameCanvas.width + wallWidth, wallWidth * 6, 0, wallWidth, true);
+    createRigidBody("wall", gameCanvas.width + wallWidth, wallWidth * 7, 0, wallWidth, true);
+
+    // Top
+    createRigidBody("wall", wallWidth * 0, -wallWidth, 0, wallWidth, true);
+    createRigidBody("wall", wallWidth * 1, -wallWidth, 0, wallWidth, true);
+    createRigidBody("wall", wallWidth * 2, -wallWidth, 0, wallWidth, true);
+    createRigidBody("wall", wallWidth * 3, -wallWidth, 0, wallWidth, true);
+    createRigidBody("wall", wallWidth * 4, -wallWidth, 0, wallWidth, true);
+    createRigidBody("wall", wallWidth * 5, -wallWidth, 0, wallWidth, true);
+    createRigidBody("wall", wallWidth * 6, -wallWidth, 0, wallWidth, true);
+    createRigidBody("wall", wallWidth * 7, -wallWidth, 0, wallWidth, true);
+
+    // Bottom
+    createRigidBody("wall", wallWidth * 0, gameCanvas.height + wallWidth, 0, wallWidth, true);
+    createRigidBody("wall", wallWidth * 1, gameCanvas.height + wallWidth, 0, wallWidth, true);
+    createRigidBody("wall", wallWidth * 2, gameCanvas.height + wallWidth, 0, wallWidth, true);
+    createRigidBody("wall", wallWidth * 3, gameCanvas.height + wallWidth, 0, wallWidth, true);
+    createRigidBody("wall", wallWidth * 4, gameCanvas.height + wallWidth, 0, wallWidth, true);
+    createRigidBody("wall", wallWidth * 5, gameCanvas.height + wallWidth, 0, wallWidth, true);
+    createRigidBody("wall", wallWidth * 6, gameCanvas.height + wallWidth, 0, wallWidth, true);
+    createRigidBody("wall", wallWidth * 7, gameCanvas.height + wallWidth, 0, wallWidth, true);
 
     // acanvas.addEventListener('mousemove', mouseMove, false); //Call the mouseMove function when the mouse is moved over the canvas element
     // acanvas.addEventListener('mousedown', mouseDown, false); //Call the mouseDown function when a mouse button is pressed down on the canvas element
@@ -54,7 +91,7 @@ function main() {
         playerObj.throttle = (keyMap.ArrowUp ? -1 : 0) + (keyMap.ArrowDown ? 1 : 0)
         playerObj.stearing = (keyMap.ArrowLeft ? -1 : 0) + (keyMap.ArrowRight ? 1 : 0)
     }
-    
+
     document.addEventListener('keydown', (event) => {
         if (event.key == "ArrowUp") {
             keyMap.ArrowUp = true;
@@ -74,11 +111,11 @@ function main() {
             event.preventDefault();
         }
 
-        if(event.key == " ") {
-            playerBullets.push(createBulletAt(playerObj.rigidBody.position.x, playerObj.rigidBody.position.y-20, playerObj.rigidBody.rotation));
+        if (event.key == " ") {
+            playerBullets.push(createBulletAt(playerObj.rigidBody.position.x, playerObj.rigidBody.position.y - 20, playerObj.rigidBody.rotation));
             event.preventDefault();
         }
-        if(event.key == "f") {
+        if (event.key == "f") {
             let href = links[0].href;
             links = new Array();
             loadWikiPage(href);
@@ -106,7 +143,7 @@ function main() {
             keyMap.ArrowRight = false;
             event.preventDefault();
         }
-        if(event.key == " ") {
+        if (event.key == " ") {
             event.preventDefault();
         }
 
@@ -131,7 +168,7 @@ function loadWikiPage(href) {
             let domparser = new DOMParser();
             wikiDOM = domparser.parseFromString(data, 'text/html');
             var anchors = getLinksFromWikiPage(wikiDOM);
-            anchors.forEach((a) => links.push(createLinkAt(100 + Math.random() * 500, 100, (Math.random()-0.5) * 1, a)));
+            anchors.forEach((a) => links.push(createLinkAt(100 + Math.random() * 500, 100, (Math.random() - 0.5) * 1, a)));
         }
     });
 }
@@ -141,12 +178,12 @@ function getLinksFromWikiPage(document) {
     var divArticle = document.getElementById("mw-content-text");
     let unfilteredAnchors = divArticle.getElementsByTagName('a');
     let anchors = new Array();
-    for(let i = 0; i < unfilteredAnchors.length; i++) {
+    for (let i = 0; i < unfilteredAnchors.length; i++) {
         let a = unfilteredAnchors[i];
-        if(a.href) {
+        if (a.href) {
             let url = new URL(a.href);
-            if(url.hostname = 'localhost' && url.pathname.startsWith('\/wiki\/') && !url.pathname.includes(':')) {
-                a.href = 'https://en.wikipedia.org'+url.pathname;
+            if (url.hostname = 'localhost' && url.pathname.startsWith('\/wiki\/') && !url.pathname.includes(':')) {
+                a.href = 'https://en.wikipedia.org' + url.pathname;
                 anchors.push(a);
             }
         }

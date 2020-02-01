@@ -1,7 +1,27 @@
 var rigidBodies = []
+var rigidBodyIndexCount = 0;
 
-function createRigidBody(xPos, yPos, rot, mass, width, height, linearDampening, angularDampening, isKinematic = false) {
+function createRigidBody(bodyType, xPos, yPos, rot, radius, isKinematic = false, options) {
+    let defaultCollisionResponse = {
+        player: "collide",
+        wall: "collide",
+        text: "collide"
+    }
+
+    let defaultOptions = {
+        mass: 1.0,
+        collisionResponse: defaultCollisionResponse,
+        linearDampening: 0.02,
+        angularDampening: 10.0,
+        onCollide: () => { },
+        onOverlap: () => { }
+    }
+
+    options = options == undefined ? defaultOptions : options;
+
     let rigidBody = {
+        index: rigidBodyIndexCount++,
+        bodyType: bodyType ? bodyType : "wall",
         position: { x: xPos, y: yPos },
         prevPosition: { x: xPos, y: yPos },
         rotation: rot,
@@ -9,12 +29,15 @@ function createRigidBody(xPos, yPos, rot, mass, width, height, linearDampening, 
         angularVelocity: 0,
         force: { x: 0, y: 0 },
         torque: 0,
-        mass: mass ? mass : 1,
-        linearDampening: linearDampening ? linearDampening : 0.02,
-        angularDampening: angularDampening ? angularDampening : 10.0,
-        width: width ? width : 10,
-        height: height ? height : 10,
+        mass: options.mass ? options.mass : defaultOptions.mass,
+        linearDampening: options.linearDampening ? options.linearDampening : defaultOptions.linearDampening,
+        angularDampening: options.angularDampening ? options.angularDampening : defaultOptions.angularDampening,
+        radius: radius ? radius : 10,
         isKinematic: isKinematic,
+        collisionResponse: options.collisionResponse ? options.collisionResponse : defaultOptions.collisionResponse,
+        onCollide: options.onCollide ? options.onCollide : defaultOptions.onCollide,
+        onOverlap: options.onOverlap ? options.onOverlap : defaultOptions.onOverlap,
+
         addForce: function (vec) {
             this.force = vecAdd(this.force, vec)
         },
@@ -29,6 +52,15 @@ function createRigidBody(xPos, yPos, rot, mass, width, height, linearDampening, 
 
     rigidBodies.push(rigidBody)
     return rigidBody
+}
+
+function destroyRigidBody(rigidBody) {
+    for (let i = 0; i < rigidBodies.length; i++) {
+        if (rigidBodies[i].index == rigidBody.index) {
+            rigidBodies.splice(i, 1);
+            break;
+        }
+    }
 }
 
 function updatePhysicsScene(deltaTime) {
@@ -53,23 +85,23 @@ function updatePhysicsScene(deltaTime) {
     }
 
     function calculateRigidBodyCollision(rb1, rb2) {
-        //var rect1 = { x: rb1.position.x - rb1.width / 2, y: rb1.position.y - rb1.height / 2, width: rb1.width, height: rb1.height }
-        //var rect2 = { x: rb2.position.x - rb2.width / 2, y: rb2.position.y - rb2.height / 2, width: rb2.width, height: rb2.height }
-        // if (rect1.x < rect2.x + rect2.width &&
-        //     rect1.x + rect1.width > rect2.x &&
-        //     rect1.y < rect2.y + rect2.height &&
-        //     rect1.y + rect1.height > rect2.y) {
-        //     performCollisionResponse()
-        //     console.log("Collide!")
-        // }
-
-        // Old circle collision
         let relativePosition = vecSubtract(rb1.position, rb2.position);
         let rbDistance = vecLength(relativePosition);
-        rb1.radius = rb1.width;
-        rb2.radius = rb2.width;
         let penetrationDepth = rbDistance - (rb1.radius + rb2.radius);
         if (penetrationDepth < 0) {
+            if (rb1.collisionResponse[rb2.bodyType] == "ignore" || rb2.collisionResponse[rb1.bodyType] == "ignore") {
+                return;
+            }
+    
+            if (rb1.collisionResponse[rb2.bodyType] == "overlap" || rb2.collisionResponse[rb1.bodyType] == "overlap") {
+                rb1.onOverlap(rb2);
+                rb2.onOverlap(rb1);
+                return;
+            }
+    
+            rb1.onCollide(rb2);
+            rb2.onCollide(rb1);
+
             let collisionAngle = vecNormalize(relativePosition);
 
             // Find the length of the component of each of the movement vectors along the collision Angle
@@ -106,22 +138,21 @@ function updatePhysicsScene(deltaTime) {
     rigidBodies.forEach((rb, i) => {
         if (!rb.isKinematic) {
             updateRigidBodyMovement(rb)
-
-            for (let j = i + 1; j < rigidBodies.length; j++) {
-                calculateRigidBodyCollision(rb, rigidBodies[j]);
-            }
         }
         else {
             rb.velocity = { x: 0, y: 0 };
             rb.prevPosition = rb.position;
+        }
+        for (let j = i + 1; j < rigidBodies.length; j++) {
+            calculateRigidBodyCollision(rb, rigidBodies[j]);
         }
     })
 }
 
 function drawPhysicsScene() {
     rigidBodies.forEach(rb => {
-        drawCircleAt(rb.position.x, rb.position.y, rb.width);
-        drawBoxAt(rb.position.x, rb.position.y, rb.width, rb.height)
+        drawCircleAt(rb.position.x, rb.position.y, rb.radius);
+        //drawBoxAt(rb.position.x, rb.position.y, rb.width, rb.height)
     });
 }
 
