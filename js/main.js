@@ -72,39 +72,51 @@ $(document).ready(function () {
     document.addEventListener('keydown', (event) => {
         if (event.key == "ArrowUp") {
             keyMap.ArrowUp = true;
+            event.preventDefault();
         }
         if (event.key == "ArrowDown") {
             keyMap.ArrowDown = true;
+            event.preventDefault();
         }
 
         if (event.key == "ArrowLeft") {
             keyMap.ArrowLeft = true;
+            event.preventDefault();
         }
         if (event.key == "ArrowRight") {
             keyMap.ArrowRight = true;
+            event.preventDefault();
+        }
+        if(event.key == "Space") {
+            event.preventDefault();
         }
 
-        //event.preventDefault();
         updateInput()
     });
 
     document.addEventListener('keyup', (event) => {
         if (event.key == "ArrowUp") {
             keyMap.ArrowUp = false;
+            event.preventDefault();
         }
         if (event.key == "ArrowDown") {
             keyMap.ArrowDown = false;
+            event.preventDefault();
         }
 
         if (event.key == "ArrowLeft") {
             keyMap.ArrowLeft = false;
+            event.preventDefault();
         }
         if (event.key == "ArrowRight") {
             keyMap.ArrowRight = false;
+            event.preventDefault();
+        }
+        if(event.key == "Space") {
+            event.preventDefault();
         }
 
-        //event.preventDefault();
-        updateInput()
+        updateInput();
     });
 
     main();
