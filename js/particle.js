@@ -1,13 +1,15 @@
-function createParticle(x, y, rotation, speed, lifeTime) {
-    let particleList = [ "@", "£", "!", "&", "$", "€", "%", "¤" ]
+function createParticle(x, y, rotation, speed, lifeTime, color) {
+    let particleList = ["@", "£", "!", "&", "$", "€", "%", "¤"]
     return {
-        rigidBody: createRigidBody("particle", x, y, rotation, 10, false, { 
+        rigidBody: createRigidBody("particle", x, y, rotation, 10, false, {
             linearDampening: 0.001,
             collisionResponse: {
                 player: "ignore",
                 wall: "ignore",
                 link: "ignore",
-                bullet: "ignore"
+                bullet: "ignore",
+                linkPortal: "ignore",
+                particle: "ignore"
             }
         }),
         speed: speed,
@@ -17,7 +19,7 @@ function createParticle(x, y, rotation, speed, lifeTime) {
         totalLifetime: lifeTime,
         fontSize: 24,
         initialFontSize: 24,
-        
+
         update: function (deltaTime) {
             if (!this.hasFirered) {
                 let force = vecScalarMultiply(this.rigidBody.getForward(), this.speed);
@@ -33,7 +35,8 @@ function createParticle(x, y, rotation, speed, lifeTime) {
 
         draw: function () {
             ctx.save();
-            ctx.fillStyle = 'rgb(190, 190, 190)';
+            this.color = color ? color : { r: 190, g: 190, b: 190 }
+            ctx.fillStyle = 'rgb(' + this.color.r + ', ' + this.color.g + ', ' + this.color.b + ')';
             drawTextAt(this.rigidBody.position.x, this.rigidBody.position.y, this.rigidBody.rotation, this.ASCII, { fontSize: this.fontSize });
             ctx.restore();
         }
