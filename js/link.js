@@ -25,7 +25,7 @@ function createLinkAt(x, y, rotation, anchorElement) {
             let end = vecAdd(this.rigidBody.position, vecScalarMultiply(this.rigidBody.getRight(), this.textSize.x / 2));
             let hits = lineTrace(start, end, "bullet", 12)
             if (hits.length > 0) {
-                for (let i = 0; i < 25; i++) {
+                for (let i = 0; i < 15; i++) {
                     let particleSpawnLocation = vecAdd(start, vecScalarMultiply(vecNormalize(vecSubtract(end, start)), lerp(0, vecLength(vecSubtract(end, start)), Math.random())));
                     particles.push(createParticle(
                         particleSpawnLocation.x,
