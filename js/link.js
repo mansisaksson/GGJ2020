@@ -7,7 +7,7 @@ function createLinkAt(x, y, rotation, anchorElement) {
         textSize: { x: 0, y: 0 },
         draw: function () {
             ctx.save();
-            if (this.href.toLowerCase() == 'https://en.wikipedia.org/wiki/adolf_hitler') {
+            if(this.href.toLowerCase() == hrefGOAL) {
                 ctx.fillStyle = 'rgb(255, 60, 60)';
                 var text = drawTextAt(this.rigidBody.position.x, this.rigidBody.position.y, this.rigidBody.rotation, this.linkAscii, { fontSize: 64 });
             }

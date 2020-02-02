@@ -10,6 +10,15 @@ var playerBullets = new Array();
 var particles = new Array();
 var links = new Array();
 var linkPortals = new Array();
+var visitedLinks = new Array();
+var hrefGOAL;
+
+var randomGoalPages = [
+    {title: 'Adolf Hitler', href: 'https://en.wikipedia.org/wiki/adolf_hitler'},
+    {title: 'NASA', href: 'https://en.wikipedia.org/wiki/nasa'},
+    {title: 'Elon Musk', href: 'https://en.wikipedia.org/wiki/elon_musk'},
+    {title: 'Sweden', href: 'https://en.wikipedia.org/wiki/sweden'}
+];
 
 function update(time) {
     let deltaTime = Math.min(1 / 16, (time - gameTime) / 1000.0);
@@ -41,7 +50,11 @@ function main() {
     gameCanvas = document.getElementById("game-canvas");
     /** @type {CanvasRenderingContext2D} */
     ctx = gameCanvas.getContext("2d");
-
+    
+    visitedLinks = document.getElementById('visitedLinks');
+    let randomPage = randomGoalPages[getRandomInt(randomGoalPages.length)];
+    hrefGOAL = randomPage.href;
+    document.getElementById('findTitle').innerHTML = "Find: " + randomPage.title;
     playerObj = createPlayerAt(400, 400, 0);
 
     // acanvas.addEventListener('mousemove', mouseMove, false); //Call the mouseMove function when the mouse is moved over the canvas element
@@ -130,6 +143,10 @@ function loadWikiPage(href) {
         destroyLinkByRigidBody(links[i].rigidBody);
     }
     links = new Array();
+    if(href.toLowerCase() == hrefGOAL) {
+        //gameCanvas.style += "background-color: red";
+        return;
+    }
     $.ajax({
         type: 'GET',
         url: 'scripts/get_wiki_content.php',
@@ -160,6 +177,8 @@ function loadWikiPage(href) {
             else {
                 wikiText.innerHTML = '';
             }
+            
+            visitedLinks.innerHTML += `<li><a href='${href}' target='_blank' style=''>${title.innerHTML}</a></li>`;
 
             anchorsToCreateLinksFrom = getLinksFromWikiPage(wikiDOM);
             
@@ -168,7 +187,7 @@ function loadWikiPage(href) {
             anchorsToSpawn = new Array();
 
             for(let i = 0; i < anchorsToCreateLinksFrom.length; i++) {
-                if(anchorsToCreateLinksFrom[i].href.toLowerCase() == 'https://en.wikipedia.org/wiki/adolf_hitler') {
+                if(anchorsToCreateLinksFrom[i].href.toLowerCase() == hrefGOAL) {
                     anchorsToSpawn.push(anchorsToCreateLinksFrom[i]);
                 }
             }
