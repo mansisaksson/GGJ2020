@@ -1,0 +1,12 @@
+.background-text {
+    position: absolute;
+    margin: 0px;
+    margin-left: 5px;
+    top: 20px;
+    left: 20px;
+    width: 70vw;
+    overflow: hidden;
+    height: 90%;
+    opacity: 0.3;
+    z-index: -1;
+}
