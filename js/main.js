@@ -17,7 +17,12 @@ var randomGoalPages = [
     {title: 'Adolf Hitler', href: 'https://en.wikipedia.org/wiki/adolf_hitler'},
     {title: 'NASA', href: 'https://en.wikipedia.org/wiki/nasa'},
     {title: 'Elon Musk', href: 'https://en.wikipedia.org/wiki/elon_musk'},
-    {title: 'Sweden', href: 'https://en.wikipedia.org/wiki/sweden'}
+    {title: 'Sweden', href: 'https://en.wikipedia.org/wiki/sweden'},
+    {title: 'Mario', href: 'https://en.wikipedia.org/wiki/mario'},
+    {title: 'Gaben', href: 'https://en.wikipedia.org/wiki/gabe_newell'},
+    {title: 'Carl XVI Gustaf', href: 'https://en.wikipedia.org/wiki/carl_xvi_gustaf_of_sweden'},
+    {title: 'IKEA', href: 'https://en.wikipedia.org/wiki/ikea'},
+    {title: 'Mozart', href: 'https://en.wikipedia.org/wiki/wolfgang_amadeus_mozart'}
 ];
 
 function update(time) {
@@ -144,7 +149,43 @@ function loadWikiPage(href) {
     }
     links = new Array();
     if(href.toLowerCase() == hrefGOAL) {
-        //gameCanvas.style += "background-color: red";
+        $.ajax({
+            type: 'GET',
+            url: 'scripts/get_wiki_content.php',
+            dataType: "text",
+            data: {
+                Site: encodeURI(href)
+            },
+            success: function (data) {
+                let domparser = new DOMParser();
+                wikiDOM = domparser.parseFromString(data, 'text/html');
+               
+                document.getElementsByTagName('title')[0].innerHTML = wikiDOM.getElementsByTagName('title')[0].innerHTML;
+    
+                if(!document.getElementById('wiki-title') && !wikiDOM.getElementById('firstHeading')){
+                    //var GAMEOVER = TRUE;
+                    return;
+                }
+                var title = document.getElementById('wiki-title');
+                if(wikiDOM.getElementById('firstHeading')) {
+                    title.innerHTML = wikiDOM.getElementById('firstHeading').innerHTML;
+                }
+                else {
+                    title.innerHTML = 'UNKNOWN';
+                }
+                var wikiText = document.getElementById('wiki-text');
+                if (wikiDOM.getElementById('mw-content-text')) {
+                    wikiText.innerHTML = wikiDOM.getElementById('mw-content-text').innerHTML;
+                }
+                else {
+                    wikiText.innerHTML = '';
+                }
+                visitedLinks.innerHTML += `<li><a href='${href}' target='_blank' style=''>${title.innerHTML}</a></li>`;
+
+                $('.background-text').fadeTo(2000, 1.0);
+            }
+        });
+
         return;
     }
     $.ajax({
