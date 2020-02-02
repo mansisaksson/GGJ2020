@@ -157,6 +157,8 @@ function loadWikiPage(href) {
         success: function (data) {
             let domparser = new DOMParser();
             wikiDOM = domparser.parseFromString(data, 'text/html');
+           
+            document.getElementsByTagName('title')[0].innerHTML = wikiDOM.getElementsByTagName('title')[0].innerHTML;
 
             if(!document.getElementById('wiki-title') && !wikiDOM.getElementById('firstHeading')){
                 var GAMEOVER = TRUE;
