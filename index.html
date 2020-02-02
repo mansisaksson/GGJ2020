@@ -16,6 +16,8 @@
     <script src="js/renderlib.js"></script>
     <script src="js/main.js"></script>
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://en.wikipedia.org/w/load.php?lang=en&amp;modules=ext.cite.styles%7Cext.uls.interlanguage%7Cext.visualEditor.desktopArticleTarget.noscript%7Cext.wikimediaBadges%7Cjquery.makeCollapsible.styles%7Cmediawiki.legacy.commonPrint%2Cshared%7Cmediawiki.skinning.interface%7Cmediawiki.toc.styles%7Cskins.vector.styles%7Cwikibase.client.init&amp;only=styles&amp;skin=vector">
+    <link rel="stylesheet" href="https://en.wikipedia.org/w/load.php?lang=en&amp;modules=site.styles&amp;only=styles&amp;skin=vector">
     <style>
     html, body, img, li, ol {
         margin: 0px;
@@ -32,6 +34,7 @@
             <img src='img/wikihead.PNG' style="width: 87vw">
             <h1 id='wiki-title' style="display: block; margin: 0px; margin-left: 20px;" >test</h1>
             <div style="position: relative;">
+
                 <canvas id="game-canvas" width="1500" height="800" style="display: inline-block; margin: 0px; margin-left: 20px; width: 70vw;"></canvas>
                 <div style='display: flex; flex-direction: column; position: absolute; top: 0; right: 50px; width: 150px'>
                     <h2 style="display: inline-block; margin: 0px; margin-left: -10px; width: 150px;">Visited Links</h2>
@@ -40,7 +43,7 @@
                     </ol>
                 </div>
                 <h3 id='findTitle' style="display: inline-block; margin: 0px, 10px, 0px, 10px">Title</h3>
-                <p class="background-text" style="position: absolute; margin: 0px; margin-left: 5px; top: 20px; left: 20px; width: 70vw;" >hello</p>
+                <p id="wiki-text" class="background-text"></p>
             </div>
         </div>
     </div> 

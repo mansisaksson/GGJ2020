@@ -21,7 +21,7 @@ var randomGoalPages = [
 ];
 
 function update(time) {
-    let deltaTime = (time - gameTime) / 1000.0;
+    let deltaTime = Math.min(1 / 16, (time - gameTime) / 1000.0);
     gameTime = time;
     gameDeltaTime = deltaTime;
 
@@ -172,9 +172,15 @@ function loadWikiPage(href) {
                 title.innerHTML = 'UNKNOWN';
             }
 
+            var wikiText = document.getElementById('wiki-text');
+            if (wikiDOM.getElementById('mw-content-text')) {
+                wikiText.innerHTML = wikiDOM.getElementById('mw-content-text').innerHTML;
+            }
+            else {
+                wikiText.innerHTML = '';
+            }
             
             visitedLinks.innerHTML += `<li><a href='${href}' target='_blank' style=''>${title.innerHTML}</a></li>`;
-
 
             anchorsToCreateLinksFrom = getLinksFromWikiPage(wikiDOM);
             
